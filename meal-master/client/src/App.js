@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
+import logo from './meal-master-logo.png';
 import './App.css';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:3001/api/recipes')
+    fetch('/api/recipes')
         .then((response) => response.json())
         .then((data) => setRecipes(data));
       }, []);
@@ -20,17 +20,7 @@ function App() {
                 ))}
             </ul>
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        
       </header>
     </div>
   );

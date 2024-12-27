@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "client": "npm start --prefix frontend", 
-    "server": "node backend/server.js"
+    "client": "npm start --prefix frontend",
+    "server": "node backend/server.js",
+    "start": "concurrently \"node server.js\" \"npm start --prefix client\""
   },
   "dependencies": {
     "@babel/core": "^7.26.0",
@@ -31,6 +32,9 @@
     "webpack-dev-server": "^5.2.0"
   },
   "babel": {
-    "presets": ["@babel/preset-env", "@babel/preset-react"]
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
   }
 }

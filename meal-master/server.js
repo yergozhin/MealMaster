@@ -11,6 +11,9 @@ const roleRoutes = require('./routes/roles');
 
 const app = express();
 
+const cors = require('cors');
+app.use(cors());
+
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
@@ -25,6 +28,6 @@ app.use('/api/recipe_ingredients', recipe_ingredientRoutes);
 app.use('/api/translations', translationRoutes);
 app.use('/api/roles', roleRoutes);
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log(`Server is running on http://localhost:${3001}`);
 });

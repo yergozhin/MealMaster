@@ -70,7 +70,7 @@ function Home() {
                                 <div className="profile-dropdown-menu">
                                     <button onClick={goToProfile}>My Profile</button>
                                     <button onClick={goToSettings}>Settings</button>
-                                    <a href="/profile">Logout</a>
+                                    <a href="/">Logout</a>
                                 </div>
                             </div>
                         </div>

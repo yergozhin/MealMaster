@@ -1,6 +1,24 @@
 const express = require('express');
+const multer = require('multer');
 const { getAllRecords, getRecordById, addRecord, updateRecord, deleteRecord, executeQuery } = require('../db/crudOnDb');
 const router = express.Router();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadPath = 'uploads/';
+
+      if (!fs.existsSync(uploadPath)) {
+        fs.mkdirSync(uploadPath);
+      }
+      cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      const filename = Date.now() + ext;
+      cb(null, filename);
+    }
+  });
+  const upload = multer({ storage: storage });
 
 router.get('/', async (req, res) => {
     try {
@@ -21,15 +39,19 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
     const { name, description, userId } = req.body;
+    const imageUrl = null;
+    if (req.file) {
+        imageUrl = `/uploads/${req.file.filename}`;
+    }
 
     if (!name || !description || !userId) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const newRecipe = { name, description, userId };
+        const newRecipe = { name, description, userId, imageUrl};
         await addRecord('recipes', newRecipe);
         res.status(201).json({ message: 'Recipe added successfully' });
     } catch (error) {

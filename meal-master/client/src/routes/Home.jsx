@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import logo from '../meal-master-logo.png';
+import profileAvatar from '../profile-picture.png'
 import '../App.css';
+import { useNavigate } from "react-router-dom";
 
 function Home() {
     const [recipes, setRecipes] = useState([]);
@@ -9,6 +11,14 @@ function Home() {
             .then((response) => response.json())
             .then((data) => setRecipes(data));
     }, []);
+
+    const navigate = useNavigate();
+    const goToProfile = () => {
+        navigate("/profile");
+    };
+    const goToSettings = () => {
+        navigate("/settings");
+    };
     return (
         <div className="App">
             <header>
@@ -53,14 +63,14 @@ function Home() {
                         </div>
                         <div className="subsection">
                             <div className="user-profile">
-                                <a href="" className="profile-button">
-                                    <img src="profile-picture.png" className="profile-avatar" />
+                                <button onClick={goToProfile} className="profile-button">
+                                    <img src={profileAvatar} className="profile-avatar" alt="profilePicture" />
                                     User Name
-                                </a>
+                                </button>
                                 <div className="profile-dropdown-menu">
-                                    <a href="">My Profile</a>
-                                    <a href="">Settings</a>
-                                    <a href="">Logout</a>
+                                    <button onClick={goToProfile}>My Profile</button>
+                                    <button onClick={goToSettings}>Settings</button>
+                                    <a href="/profile">Logout</a>
                                 </div>
                             </div>
                         </div>
@@ -68,12 +78,12 @@ function Home() {
                 </div>
             </header>
             <main>
-                <h2>Example Recipes</h2>
-                <div className="recipe-card-container page-1">
-                    <div className="recipe-card">
-                        <img src="pizza.jpeg" className="recipe-image" />
-                        <h3>Pizza</h3>
-                        <p className="recipe-description">Delicious pizza!</p>
+                <h2>Recipes</h2>
+                <div className="recipe-card-container page-1"> {recipes.map((recipe) => (
+                    <div className="recipe-card" key={recipe.id}>
+                        <img src="" className="recipe-image" alt="receipeImage"/>
+                        <h3>{recipe.name}</h3>
+                        <p className="recipe-description">Delicious {recipe.name}!</p>
                         <button className="recipe-button">View Recipe</button>
                         <button className="addtofavorites-button">Add To Favorites</button>
                         <div className="rating">
@@ -83,79 +93,7 @@ function Home() {
                             <button className="star" data-value="4">☆</button>
                             <button className="star" data-value="5">☆</button>
                         </div>
-                    </div>
-                    <div className="recipe-card">
-                        <img src="burger.jpeg" className="recipe-image" />
-                        <h3>Burger</h3>
-                        <p className="recipe-description">Delicious burger!</p>
-                        <button className="recipe-button">View Recipe</button>
-                        <button className="addtofavorites-button">Add To Favorites</button>
-                        <div className="rating">
-                            <button className="star" data-value="1">☆</button>
-                            <button className="star" data-value="2">☆</button>
-                            <button className="star" data-value="3">☆</button>
-                            <button className="star" data-value="4">☆</button>
-                            <button className="star" data-value="5">☆</button>
-                        </div>
-                    </div>
-                    <div className="recipe-card">
-                        <img src="pasta.jpeg" className="recipe-image" />
-                        <h3>Pasta</h3>
-                        <p className="recipe-description">Delicious pasta</p>
-                        <button className="recipe-button">View Recipe</button>
-                        <button className="addtofavorites-button">Add To Favorites</button>
-                        <div className="rating">
-                            <button className="star" data-value="1">☆</button>
-                            <button className="star" data-value="2">☆</button>
-                            <button className="star" data-value="3">☆</button>
-                            <button className="star" data-value="4">☆</button>
-                            <button className="star" data-value="5">☆</button>
-                        </div>
-                    </div>
-                </div>
-                <div className="recipe-card-container page-2">
-                    <div className="recipe-card">
-                        <img src="pasta.jpeg" className="recipe-image" />
-                        <h3>Pasta</h3>
-                        <p className="recipe-description">Delicious pasta</p>
-                        <button className="recipe-button">View Recipe</button>
-                        <button className="addtofavorites-button">Add To Favorites</button>
-                        <div className="rating">
-                            <button className="star" data-value="1">☆</button>
-                            <button className="star" data-value="2">☆</button>
-                            <button className="star" data-value="3">☆</button>
-                            <button className="star" data-value="4">☆</button>
-                            <button className="star" data-value="5">☆</button>
-                        </div>
-                    </div>
-                    <div className="recipe-card">
-                        <img src="pasta.jpeg" className="recipe-image" />
-                        <h3>Pasta</h3>
-                        <p className="recipe-description">Delicious pasta</p>
-                        <button className="recipe-button">View Recipe</button>
-                        <button className="addtofavorites-button">Add To Favorites</button>
-                        <div className="rating">
-                            <button className="star" data-value="1">☆</button>
-                            <button className="star" data-value="2">☆</button>
-                            <button className="star" data-value="3">☆</button>
-                            <button className="star" data-value="4">☆</button>
-                            <button className="star" data-value="5">☆</button>
-                        </div>
-                    </div>
-                    <div className="recipe-card">
-                        <img src="pasta.jpeg" className="recipe-image" />
-                        <h3>Pasta</h3>
-                        <p className="recipe-description">Delicious pasta</p>
-                        <button className="recipe-button">View Recipe</button>
-                        <button className="addtofavorites-button">Add To Favorites</button>
-                        <div className="rating">
-                            <button className="star" data-value="1">☆</button>
-                            <button className="star" data-value="2">☆</button>
-                            <button className="star" data-value="3">☆</button>
-                            <button className="star" data-value="4">☆</button>
-                            <button className="star" data-value="5">☆</button>
-                        </div>
-                    </div>
+                    </div>))}
                 </div>
                 <div className="pagination">
                     <button className="prev-button">Prev</button>
@@ -165,23 +103,13 @@ function Home() {
             <footer>
                 <div className="footer-container">
                     <div className="footer-links">
-                        <a href="" className="footer-link">Privacy Policy</a>
-                        <a href="" className="footer-link">Terms of Service</a>
-                        <a href="" className="footer-link">About</a>
-                        <a href="" className="footer-link">Support/Contact</a>
+                        <a href="/" className="footer-link">Privacy Policy</a>
+                        <a href="/" className="footer-link">Terms of Service</a>
+                        <a href="/" className="footer-link">About</a>
+                        <a href="/" className="footer-link">Support/Contact</a>
                     </div>
                 </div>
             </footer>
-            {/*<header className="App-header">
-                <ul>
-                    {recipes.map((recipe) => (
-                        <li key={recipe.id}>
-                            {recipe.name}
-                        </li>
-                    ))}
-                </ul>
-
-                    </header>*/}
         </div>
     );
 }

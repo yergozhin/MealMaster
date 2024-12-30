@@ -19,6 +19,9 @@ function Home() {
     const goToSettings = () => {
         navigate("/settings");
     };
+    const goToAddRecipe = () => {
+        navigate("/addRecipe");
+    };
     return (
         <div className="App">
             <header>
@@ -39,7 +42,7 @@ function Home() {
                             <button>My Recipes</button>
                         </div>
                         <div className="subsection">
-                            <button>Add Recipe</button>
+                            <button onClick={goToAddRecipe}>Add Recipe</button>
                         </div>
                         <div className="subsection">
                             <div className="filter-dropdown">
@@ -81,7 +84,7 @@ function Home() {
                 <h2>Recipes</h2>
                 <div className="recipe-card-container page-1"> {recipes.map((recipe) => (
                     <div className="recipe-card" key={recipe.id}>
-                        <img src="" className="recipe-image" alt="receipeImage"/>
+                        {<img src={recipe.imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage"/>}
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">Delicious {recipe.name}!</p>
                         <button className="recipe-button">View Recipe</button>

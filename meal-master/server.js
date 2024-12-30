@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const bodyParser = require('body-parser');
 const recipeRoutes = require('./routes/recipes');
 const userRoutes = require('./routes/users');
@@ -13,6 +14,8 @@ const app = express();
 
 const cors = require('cors');
 app.use(cors());
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(bodyParser.json());
 

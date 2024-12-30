@@ -1,34 +1,52 @@
 const express = require('express');
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const { getAllRecords, getRecordById, addRecord, updateRecord, deleteRecord, executeQuery } = require('../db/crudOnDb');
 const router = express.Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      const uploadPath = 'uploads/';
+        const uploadPath = 'uploads/';
 
-      if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath);
-      }
-      cb(null, uploadPath);
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath);
+        }
+        cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      const filename = Date.now() + ext;
-      cb(null, filename);
-    }
-  });
-  const upload = multer({ storage: storage });
+        const ext = path.extname(file.originalname);
+        const filename = Date.now() + ext;
+        cb(null, filename);
+    },
+});
 
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error('Invalid file type. Only JPG, PNG, and GIF are allowed.'));
+        }
+        cb(null, true);
+    },
+    limits: { fileSize: 2 * 1024 * 1024 }, // Limit file size to 2MB
+});
+
+// Routes
+
+// Get all recipes
 router.get('/', async (req, res) => {
     try {
-        const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt']);
+        const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt', 'imageUrl']);
         res.json(recipes);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
+// Get recipe by ID
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -39,26 +57,30 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// Add a new recipe
 router.post('/', upload.single('image'), async (req, res) => {
     const { name, description, userId } = req.body;
-    const imageUrl = null;
+    let imageUrl = null;
+
+    // Handle uploaded file
     if (req.file) {
         imageUrl = `/uploads/${req.file.filename}`;
+        //console.log('Uploaded image URL:', imageUrl);
     }
 
+    // Validate required fields
     if (!name || !description || !userId) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const newRecipe = { name, description, userId, imageUrl};
+        const newRecipe = { name, description, userId, imageUrl };
         await addRecord('recipes', newRecipe);
         res.status(201).json({ message: 'Recipe added successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
-
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, description, userId } = req.body;

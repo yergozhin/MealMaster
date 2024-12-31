@@ -8,6 +8,7 @@ const permissionRoutes = require('./routes/permissions');
 const recipe_ingredientRoutes = require('./routes/recipe_ingredients');
 const translationRoutes = require('./routes/translations');
 const roleRoutes = require('./routes/roles');
+const authRoutes = require('./routes/authRoutes');
 
 
 const app = express();
@@ -30,6 +31,8 @@ app.use('/api/permissions', permissionRoutes);
 app.use('/api/recipe_ingredients', recipe_ingredientRoutes);
 app.use('/api/translations', translationRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/auth', authRoutes);
+
 
 app.listen(3001, () => {
     console.log(`Server is running on http://localhost:${3001}`);

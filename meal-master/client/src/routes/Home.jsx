@@ -5,6 +5,37 @@ import '../App.css';
 import { useNavigate } from "react-router-dom";
 
 function Home() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        
+        if (token) {
+          fetch('/auth/check-login', {
+            method: 'GET',
+            headers: {
+              'Authorization': `${token}`,  // Send token in the Authorization header
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message === 'User is logged in') {
+                setIsLoggedIn(true);
+                setUser(data.user);
+              } else {
+                setIsLoggedIn(false);
+              }
+            })
+            .catch((error) => {
+              console.error('Error during login check:', error);
+              setIsLoggedIn(false);
+            });
+        } else {
+          setIsLoggedIn(false);
+        }
+      }, []);
+    
+
     const [recipes, setRecipes] = useState([]);
     useEffect(() => {
         fetch('/api/recipes')
@@ -22,9 +53,27 @@ function Home() {
     const goToAddRecipe = () => {
         navigate("/addRecipe");
     };
+    const logout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false); // Or trigger a recheck of the login status
+    };
     return (
         <div className="App">
             <header>
+            <div>
+            {isLoggedIn ? (
+                <h1>Welcome, you are logged in!</h1>
+            ) : (
+                <h1>Please log in</h1>
+            )}
+        </div>
+        <div>
+          {user ? (
+            <h1>Welcome, User {user.userId}!</h1> // Displaying userId or name if returned
+          ) : (
+            <h1>Please log in</h1>
+          )}
+        </div>
                 <div className="container">
                     <div className="section" id="section1">
                         <div className="subsection">
@@ -73,7 +122,7 @@ function Home() {
                                 <div className="profile-dropdown-menu">
                                     <button onClick={goToProfile}>My Profile</button>
                                     <button onClick={goToSettings}>Settings</button>
-                                    <a href="/">Logout</a>
+                                    <button onClick={logout}>Logout</button>
                                 </div>
                             </div>
                         </div>

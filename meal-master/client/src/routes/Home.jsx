@@ -5,36 +5,34 @@ import '../App.css';
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
     useEffect(() => {
         const token = localStorage.getItem('token');
-        
+
         if (token) {
-          fetch('/auth/check-login', {
-            method: 'GET',
-            headers: {
-              'Authorization': `${token}`,  // Send token in the Authorization header
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.message === 'User is logged in') {
-                setIsLoggedIn(true);
-                setUser(data.user);
-              } else {
-                setIsLoggedIn(false);
-              }
+            fetch('/auth/check-login', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `${token}`,
+                },
             })
-            .catch((error) => {
-              console.error('Error during login check:', error);
-              setIsLoggedIn(false);
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.message === 'User is logged in') {
+                        setUser(data.user);
+                    } else {
+                        setUser(null);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error during login check:', error);
+                    setUser(null);
+                });
         } else {
-          setIsLoggedIn(false);
+            setUser(null);
         }
-      }, []);
-    
+    }, []);
+
 
     const [recipes, setRecipes] = useState([]);
     useEffect(() => {
@@ -55,25 +53,18 @@ function Home() {
     };
     const logout = () => {
         localStorage.removeItem('token');
-        setIsLoggedIn(false); // Or trigger a recheck of the login status
+        setUser(null);
     };
     return (
         <div className="App">
             <header>
-            <div>
-            {isLoggedIn ? (
-                <h1>Welcome, you are logged in!</h1>
-            ) : (
-                <h1>Please log in</h1>
-            )}
-        </div>
-        <div>
-          {user ? (
-            <h1>Welcome, User {user.userId}!</h1> // Displaying userId or name if returned
-          ) : (
-            <h1>Please log in</h1>
-          )}
-        </div>
+                <div>
+                    {user ? (
+                        <h1>Welcome, User {user.userId}!</h1>
+                    ) : (
+                        <h1>Please log in</h1>
+                    )}
+                </div>
                 <div className="container">
                     <div className="section" id="section1">
                         <div className="subsection">
@@ -133,7 +124,7 @@ function Home() {
                 <h2>Recipes</h2>
                 <div className="recipe-card-container page-1"> {recipes.map((recipe) => (
                     <div className="recipe-card" key={recipe.id}>
-                        {<img src={recipe.imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage"/>}
+                        {<img src={recipe.imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">Delicious {recipe.name}!</p>
                         <button className="recipe-button">View Recipe</button>

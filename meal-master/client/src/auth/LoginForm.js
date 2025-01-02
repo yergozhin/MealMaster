@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch('/auth/login', {
@@ -20,7 +22,9 @@ const LoginForm = () => {
     } else {
       alert('Login failed: ' + data.error);
       console.error('No token received in response');
+      return;
     }
+    navigate("/");
   };
 
   return (

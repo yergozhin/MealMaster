@@ -51,6 +51,12 @@ function Home() {
     const goToAddRecipe = () => {
         navigate("/addRecipe");
     };
+    const goToRegister = () => {
+        navigate("/register");
+    };
+    const goToLogin = () => {
+        navigate("/login");
+    };
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
@@ -96,27 +102,40 @@ function Home() {
                         </div>
                     </div>
                     <div className="section">
-                        <div className="subsection">
-                            <div className="search-recipes">
-                                <input type="text" className="search-input" placeholder="Search for recipes..." />
-                            </div>
-                        </div>
-                        <div className="subsection">
-                            <button>Favorite Recipes</button>
-                        </div>
-                        <div className="subsection">
-                            <div className="user-profile">
-                                <button onClick={goToProfile} className="profile-button">
-                                    <img src={profileAvatar} className="profile-avatar" alt="profilePicture" />
-                                    User Name
-                                </button>
-                                <div className="profile-dropdown-menu">
-                                    <button onClick={goToProfile}>My Profile</button>
-                                    <button onClick={goToSettings}>Settings</button>
-                                    <button onClick={logout}>Logout</button>
+                        {user ? (
+                            <>
+                                <div className="subsection">
+                                    <div className="search-recipes">
+                                        <input type="text" className="search-input" placeholder="Search for recipes..." />
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div className="subsection">
+                                    <button>Favorite Recipes</button>
+                                </div>
+                                <div className="subsection">
+                                    <div className="user-profile">
+                                        <button onClick={goToProfile} className="profile-button">
+                                            <img src={profileAvatar} className="profile-avatar" alt="profilePicture" />
+                                            {user.name}
+                                        </button>
+                                        <div className="profile-dropdown-menu">
+                                            <button onClick={goToProfile}>My Profile</button>
+                                            <button onClick={goToSettings}>Settings</button>
+                                            <button onClick={logout}>Logout</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="subsection">
+                                    <button onClick={goToRegister}>Register</button>
+                                </div>
+                                <div className="subsection">
+                                    <button onClick={goToLogin}>Login</button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </header>

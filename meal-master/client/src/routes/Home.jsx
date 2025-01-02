@@ -19,7 +19,15 @@ function Home() {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.message === 'User is logged in') {
-                        setUser(data.user);
+                        fetch(`/api/users/${data.user.userId}`)
+                    .then((response) => response.json())
+                    .then((userData) => {
+                        setUser(userData); // Set the full user data
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user data:', error);
+                        setUser(null); // In case of error, clear user data
+                    });
                     } else {
                         setUser(null);
                     }
@@ -66,7 +74,7 @@ function Home() {
             <header>
                 <div>
                     {user ? (
-                        <h1>Welcome, User {user.userId}!</h1>
+                        <h1>Welcome, User {user[0].id}!</h1>
                     ) : (
                         <h1>Please log in</h1>
                     )}
@@ -84,12 +92,15 @@ function Home() {
                         <div className="subsection">
                             <button>Home</button>
                         </div>
-                        <div className="subsection">
-                            <button>My Recipes</button>
-                        </div>
-                        <div className="subsection">
-                            <button onClick={goToAddRecipe}>Add Recipe</button>
-                        </div>
+                        {user ? (<>
+                            <div className="subsection">
+                                <button>My Recipes</button>
+                            </div>
+                            <div className="subsection">
+                                <button onClick={goToAddRecipe}>Add Recipe</button>
+                            </div>
+                        </>
+                        ) : (<></>)}
                         <div className="subsection">
                             <div className="filter-dropdown">
                                 <button className="filter-dropdown-button">Browse Recipes</button>
@@ -116,7 +127,7 @@ function Home() {
                                     <div className="user-profile">
                                         <button onClick={goToProfile} className="profile-button">
                                             <img src={profileAvatar} className="profile-avatar" alt="profilePicture" />
-                                            {user.name}
+                                            {user[0].name}
                                         </button>
                                         <div className="profile-dropdown-menu">
                                             <button onClick={goToProfile}>My Profile</button>
@@ -128,11 +139,13 @@ function Home() {
                             </>
                         ) : (
                             <>
-                                <div className="subsection">
-                                    <button onClick={goToRegister}>Register</button>
-                                </div>
-                                <div className="subsection">
-                                    <button onClick={goToLogin}>Login</button>
+                                <div className="auth-buttons-wrapper">
+                                    <div className="subsection">
+                                        <button className="authButton" onClick={goToRegister}>Register</button>
+                                    </div>
+                                    <div className="subsection">
+                                        <button className="authButton" onClick={goToLogin}>Login</button>
+                                    </div>
                                 </div>
                             </>
                         )}
@@ -147,14 +160,19 @@ function Home() {
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">Delicious {recipe.name}!</p>
                         <button className="recipe-button">View Recipe</button>
-                        <button className="addtofavorites-button">Add To Favorites</button>
-                        <div className="rating">
-                            <button className="star" data-value="1">☆</button>
-                            <button className="star" data-value="2">☆</button>
-                            <button className="star" data-value="3">☆</button>
-                            <button className="star" data-value="4">☆</button>
-                            <button className="star" data-value="5">☆</button>
-                        </div>
+                        {user ? (
+                            <><button className="addtofavorites-button">Add To Favorites</button>
+                                <div className="rating">
+                                    <button className="star" data-value="1">☆</button>
+                                    <button className="star" data-value="2">☆</button>
+                                    <button className="star" data-value="3">☆</button>
+                                    <button className="star" data-value="4">☆</button>
+                                    <button className="star" data-value="5">☆</button>
+                                </div></>
+                        ) : (
+                            <></>
+                        )}
+
                     </div>))}
                 </div>
                 <div className="pagination">

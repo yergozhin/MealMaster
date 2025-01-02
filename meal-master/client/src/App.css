@@ -250,3 +250,24 @@ footer {
 .footer-link:hover {
   color: #ffcc00;
 }
+
+.auth-buttons-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 50px;
+}
+
+.authButton {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.authButton:hover {
+  background-color: #45a049;
+}

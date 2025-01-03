@@ -20,14 +20,14 @@ function Home() {
                 .then((data) => {
                     if (data.message === 'User is logged in') {
                         fetch(`/api/users/${data.user.userId}`)
-                    .then((response) => response.json())
-                    .then((userData) => {
-                        setUser(userData); // Set the full user data
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching user data:', error);
-                        setUser(null); // In case of error, clear user data
-                    });
+                            .then((response) => response.json())
+                            .then((userData) => {
+                                setUser(userData); // Set the full user data
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching user data:', error);
+                                setUser(null); // In case of error, clear user data
+                            });
                     } else {
                         setUser(null);
                     }
@@ -69,6 +69,21 @@ function Home() {
         localStorage.removeItem('token');
         setUser(null);
     };
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
+
+    const totalPages = Math.ceil(recipes.length / itemsPerPage);
+
+    const handleChangePage = (newPage) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentItems = recipes.slice(startIndex, startIndex + itemsPerPage);
+
     return (
         <div className="App">
             <header>
@@ -154,7 +169,7 @@ function Home() {
             </header>
             <main>
                 <h2>Recipes</h2>
-                <div className="recipe-card-container page-1"> {recipes.map((recipe) => (
+                <div className="recipe-card-container page-1"> {currentItems.map((recipe) => (
                     <div className="recipe-card" key={recipe.id}>
                         {<img src={recipe.imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
                         <h3>{recipe.name}</h3>
@@ -176,8 +191,17 @@ function Home() {
                     </div>))}
                 </div>
                 <div className="pagination">
-                    <button className="prev-button">Prev</button>
-                    <button className="next-button">Next</button>
+                    <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1} className="prev-button">Prev</button>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <button
+                            key={i}
+                            className={currentPage === i + 1 ? "active" : ""}
+                            onClick={() => handleChangePage(i + 1)}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
+                    <button className="next-button" onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
                 </div>
             </main>
             <footer>

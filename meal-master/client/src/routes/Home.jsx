@@ -69,6 +69,9 @@ function Home() {
         localStorage.removeItem('token');
         setUser(null);
     };
+    const goToViewRecipe = (id) => {
+        navigate(`/recipe/${id}`);
+    };
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -197,7 +200,7 @@ function Home() {
                         {<img src={recipe.imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">Delicious {recipe.name}!</p>
-                        <button className="recipe-button">View Recipe</button>
+                        <button onClick={() => goToViewRecipe(recipe.id)} className="recipe-button">View Recipe</button>
                         {user ? (
                             <><button className="addtofavorites-button">Add To Favorites</button>
                                 <div className="rating">

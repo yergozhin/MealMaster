@@ -7,6 +7,7 @@ import AddRecipe from './routes/AddRecipe.jsx';
 import LoginForm from './auth/LoginForm';
 import RegisterForm from './auth/RegisterForm';
 import ProtectedRoute from './auth/ProtectedRoute';
+import ViewRecipe from './routes/ViewRecipe.jsx';
 
 const App = () => (
   <Router>
@@ -17,6 +18,7 @@ const App = () => (
       <Route path="/addRecipe" element={<ProtectedRoute><AddRecipe /></ProtectedRoute>} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
+      <Route path="/recipe/:id" element={<ViewRecipe />} />
     </Routes>
   </Router>
 );

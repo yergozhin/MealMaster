@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -25,12 +25,51 @@ function AddRecipe() {
             image: e.target.files[0],
         }));
     };
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            fetch('/auth/check-login', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `${token}`,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.message === 'User is logged in') {
+                        fetch(`/api/users/${data.user.userId}`)
+                            .then((response) => response.json())
+                            .then((userData) => {
+                                setUser(userData); // Set the full user data
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching user data:', error);
+                                setUser(null); // In case of error, clear user data
+                            });
+                    } else {
+                        setUser(null);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error during login check:', error);
+                    setUser(null);
+                });
+        } else {
+            setUser(null);
+        }
+    }, []);
     const handleSubmit = async (e) => {
+        if(!user){
+            navigate("/");
+            return;
+        }
         e.preventDefault();
         const data = new FormData();
         data.append('name', formData.name);
         data.append('description', formData.description);
-        data.append('userId', formData.userId);
+        data.append('userId', user[0].id);
         if (formData.image) {
             data.append('image', formData.image);
         }
@@ -77,17 +116,6 @@ function AddRecipe() {
                         onChange={handleChange}
                         required
                     ></textarea>
-                </div>
-                <div>
-                    <label htmlFor="userId">User ID:</label>
-                    <input
-                        type="text"
-                        id="userId"
-                        name="userId"
-                        value={formData.userId}
-                        onChange={handleChange}
-                        required
-                    />
                 </div>
                 <div>
                     <label htmlFor="image">Image:</label>

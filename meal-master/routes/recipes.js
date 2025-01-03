@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { getAllRecords, getRecordById, addRecord, updateRecord, deleteRecord, executeQuery } = require('../db/crudOnDb');
 const router = express.Router();
+const db = require('../db/config');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -59,7 +60,7 @@ router.get('/:id', async (req, res) => {
 
 // Add a new recipe
 router.post('/', upload.single('image'), async (req, res) => {
-    const { name, description, userId } = req.body;
+    const { name, description, userId, ingredients } = req.body;
     let imageUrl = null;
 
     // Handle uploaded file
@@ -69,13 +70,50 @@ router.post('/', upload.single('image'), async (req, res) => {
     }
 
     // Validate required fields
-    if (!name || !description || !userId) {
+    if (!name || !description || !userId || !Array.isArray(ingredients)|| ingredients.length === 0) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const newRecipe = { name, description, userId, imageUrl };
-        await addRecord('recipes', newRecipe);
+        const [recipeResult] = await db.query(
+            'INSERT INTO recipes (name, description, userId) VALUES (?, ?, ?)',
+            [name, description, userId]
+        );
+        const recipeId = recipeResult.insertId;
+
+        for (const ingredient of ingredients) {
+            const { name, quantity, unit, notes } = ingredient;
+            if (!name || quantity == null || !unit) {
+                throw new Error('Invalid ingredient details');
+            }
+
+            let ingredientId;
+
+            // Check if the ingredient already exists
+            const [existingIngredient] = await db.query(
+                'SELECT id FROM ingredients WHERE name = ?',
+                [name]
+            );
+
+            if (existingIngredient.length > 0) {
+                // Use the existing ingredient
+                ingredientId = existingIngredient[0].id;
+            } else {
+                // Insert the new ingredient
+                const [ingredientResult] = await db.query(
+                    'INSERT INTO ingredients (name, unit) VALUES (?, ?)',
+                    [name, unit]
+                );
+                ingredientId = ingredientResult.insertId;
+            }
+
+            // Associate the ingredient with the recipe
+            await db.query(
+                'INSERT INTO recipe_ingredients (recipeId, ingredientId, quantity, unit, notes) VALUES (?, ?, ?, ?, ?)',
+                [recipeId, ingredientId, quantity, unit, notes]
+            );
+        }
+
         res.status(201).json({ message: 'Recipe added successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });

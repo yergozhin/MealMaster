@@ -7,8 +7,10 @@ function ViewRecipe() {
     useEffect(() => {
         fetch(`/api/recipes/${id}`)
             .then((response) => response.json())
-            .then((data) => {console.log('Fetched recipe data:', data);
-                setRecipe(data);})
+            .then((data) => {
+                console.log('Fetched recipe data:', data);
+                setRecipe(data);
+            })
             .catch((error) => console.error('Error fetching recipe:', error));
     }, [id]);
     if (!recipe) {
@@ -16,14 +18,16 @@ function ViewRecipe() {
     }
     return (
         <>
-        <h1>Recipe: {recipe.recipe[0].name}</h1>
-        {<img src={recipe.recipe[0].imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
-        <h2>Ingredients:</h2>
-        <div>{recipe.ingredients.map((ingredient) => 
-        <div key={ingredient.id}>
-            <h4>Name: {ingredient.name}({ingredient.quantity} {ingredient.unit})</h4>
-        </div>
-        )}</div>
+            <h1>Recipe: {recipe.recipe[0].name}</h1>
+            {<img src={recipe.recipe[0].imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
+            <h2>Ingredients:</h2>
+            <div>{recipe.ingredients.map((ingredient) =>
+                <div key={ingredient.id}>
+                    <h4>Name: {ingredient.name}({ingredient.quantity} {ingredient.unit})</h4>
+                </div>
+            )}</div>
+            <h2>Description: </h2>
+            <div>{recipe.recipe[0].description}</div>
         </>
     );
 }

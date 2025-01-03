@@ -85,7 +85,7 @@ function Home() {
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = recipes.slice(startIndex, startIndex + itemsPerPage);
+    const currentItems = Array.isArray(recipes) ? recipes.slice(startIndex, startIndex + itemsPerPage) : [];
 
     const getPageNumbers = () => {
         const pageNumbers = [];
@@ -114,7 +114,7 @@ function Home() {
         <div className="App">
             <header>
                 <div>
-                    {user ? (
+                    {user && user.length > 0 ? (
                         <h1>Welcome, User {user[0].id}!</h1>
                     ) : (
                         <h1>Please log in</h1>
@@ -133,7 +133,7 @@ function Home() {
                         <div className="subsection">
                             <button>Home</button>
                         </div>
-                        {user ? (<>
+                        {user && user.length > 0  ? (<>
                             <div className="subsection">
                                 <button>My Recipes</button>
                             </div>
@@ -154,7 +154,7 @@ function Home() {
                         </div>
                     </div>
                     <div className="section">
-                        {user ? (
+                        {user && user.length > 0  ? (
                             <>
                                 <div className="subsection">
                                     <div className="search-recipes">
@@ -201,7 +201,7 @@ function Home() {
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">Delicious {recipe.name}!</p>
                         <button onClick={() => goToViewRecipe(recipe.id)} className="recipe-button">View Recipe</button>
-                        {user ? (
+                        {user && user.length > 0 ? (
                             <><button className="addtofavorites-button">Add To Favorites</button>
                                 <div className="rating">
                                     <button className="star" data-value="1">☆</button>
@@ -232,7 +232,7 @@ function Home() {
                     ))}
 
                     {currentPage < totalPages - 2 && <span>...</span>}
-                    <button  onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages} className="next-button">Next</button>
+                    <button onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages} className="next-button">Next</button>
                     <button onClick={() => handleChangePage(totalPages)} disabled={currentPage === totalPages} className="last-button">Last</button>
                 </div>
             </main>

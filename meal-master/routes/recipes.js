@@ -60,6 +60,7 @@ router.get('/:id', async (req, res) => {
 
 // Add a new recipe
 router.post('/', upload.single('image'), async (req, res) => {
+    //console.log(req.file);
     const { name, description, userId, ingredients } = req.body;
     let imageUrl = null;
 
@@ -68,33 +69,33 @@ router.post('/', upload.single('image'), async (req, res) => {
         imageUrl = `/uploads/${req.file.filename}`;
         //console.log('Uploaded image URL:', imageUrl);
     }
-
+    let parsedIngredients = [];
+    if (ingredients) {
+        parsedIngredients = JSON.parse(ingredients); // Convert back to an array
+    }
     // Validate required fields
-    if (!name || !description || !userId || !Array.isArray(ingredients)|| ingredients.length === 0) {
+    if (!name || !description || !userId || parsedIngredients.length === 0) {
+        //console.log(req.body);
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
         const [recipeResult] = await db.query(
-            'INSERT INTO recipes (name, description, userId) VALUES (?, ?, ?)',
-            [name, description, userId]
+            'INSERT INTO recipes (name, description, userId, imageUrl) VALUES (?, ?, ?, ?)',
+            [name, description, userId, imageUrl]
         );
         const recipeId = recipeResult.insertId;
-
-        for (const ingredient of ingredients) {
+        for (const ingredient of parsedIngredients) {
             const { name, quantity, unit, notes } = ingredient;
             if (!name || quantity == null || !unit) {
                 throw new Error('Invalid ingredient details');
             }
-
             let ingredientId;
-
             // Check if the ingredient already exists
             const [existingIngredient] = await db.query(
                 'SELECT id FROM ingredients WHERE name = ?',
                 [name]
             );
-
             if (existingIngredient.length > 0) {
                 // Use the existing ingredient
                 ingredientId = existingIngredient[0].id;
@@ -106,7 +107,6 @@ router.post('/', upload.single('image'), async (req, res) => {
                 );
                 ingredientId = ingredientResult.insertId;
             }
-
             // Associate the ingredient with the recipe
             await db.query(
                 'INSERT INTO recipe_ingredients (recipeId, ingredientId, quantity, unit, notes) VALUES (?, ?, ?, ?, ?)',

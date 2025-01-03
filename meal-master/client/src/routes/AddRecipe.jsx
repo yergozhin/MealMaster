@@ -7,6 +7,7 @@ const AddRecipe = () => {
         name: '',
         description: '',
         userId: '',
+        imageUrl: null,
     });
     const [ingredients, setIngredients] = useState([
         { name: '', quantity: '', unit: '', notes: '' },
@@ -17,7 +18,12 @@ const AddRecipe = () => {
         const { name, value } = e.target;
         setRecipe((prev) => ({ ...prev, [name]: value }));
     };
-
+    const handleFileChange = (e) => {
+        setRecipe((prevData) => ({
+            ...prevData,
+            imageUrl: e.target.files[0],
+        }));
+    };
     const handleIngredientChange = (index, field, value) => {
         const updatedIngredients = [...ingredients];
         updatedIngredients[index][field] = value;
@@ -64,18 +70,17 @@ const AddRecipe = () => {
     }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const formData = new FormData(); // Use FormData for handling file uploads
+
+    formData.append('name', recipe.name);
+    formData.append('description', recipe.description);
+    formData.append('userId', user[0].id);
+    formData.append('image', recipe.imageUrl); // Append the file for image upload
+    formData.append('ingredients', JSON.stringify(ingredients));
         try {
             const response = await fetch('/api/recipes', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: recipe.name,
-                    description: recipe.description,
-                    userId: user[0].id,
-                    ingredients,
-                }),
+                body: formData, // Send the FormData with the image file
             });
 
             const result = await response.json();
@@ -111,6 +116,16 @@ const AddRecipe = () => {
                         value={recipe.description}
                         onChange={handleRecipeChange}
                         required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="image">Image:</label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/*"
+                        onChange={handleFileChange}
                     />
                 </div>
                 <div>

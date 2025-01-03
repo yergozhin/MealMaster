@@ -84,6 +84,29 @@ function Home() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentItems = recipes.slice(startIndex, startIndex + itemsPerPage);
 
+    const getPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPageLinks = 5; // Maximum visible page links
+        const halfWindow = Math.floor(maxPageLinks / 2);
+
+        let start = Math.max(1, currentPage - halfWindow);
+        let end = Math.min(totalPages, currentPage + halfWindow);
+
+        // Adjust the range if at the beginning or end
+        if (currentPage <= halfWindow) {
+            end = Math.min(totalPages, start + maxPageLinks - 1);
+        }
+        if (currentPage + halfWindow >= totalPages) {
+            start = Math.max(1, totalPages - maxPageLinks + 1);
+        }
+
+        for (let i = start; i <= end; i++) {
+            pageNumbers.push(i);
+        }
+        return pageNumbers;
+    };
+
+
     return (
         <div className="App">
             <header>
@@ -191,17 +214,23 @@ function Home() {
                     </div>))}
                 </div>
                 <div className="pagination">
-                    <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1} className="prev-button">Prev</button>
-                    {Array.from({ length: totalPages }, (_, i) => (
+                    <button onClick={() => handleChangePage(1)} disabled={currentPage === 1} className="first-button">First</button>
+                    <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1} className="prev-button">Previous</button>
+                    {currentPage > 3 && <span>...</span>}
+
+                    {getPageNumbers().map((page) => (
                         <button
-                            key={i}
-                            className={currentPage === i + 1 ? "active" : ""}
-                            onClick={() => handleChangePage(i + 1)}
+                            key={page}
+                            className={currentPage === page ? "active" : ""}
+                            onClick={() => handleChangePage(page)}
                         >
-                            {i + 1}
+                            {page}
                         </button>
                     ))}
-                    <button className="next-button" onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
+
+                    {currentPage < totalPages - 2 && <span>...</span>}
+                    <button  onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages} className="next-button">Next</button>
+                    <button onClick={() => handleChangePage(totalPages)} disabled={currentPage === totalPages} className="last-button">Last</button>
                 </div>
             </main>
             <footer>

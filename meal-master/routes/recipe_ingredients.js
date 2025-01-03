@@ -72,7 +72,7 @@ const getRecipeAndIngredientDetails = async (recipe_ingredientsId) => {
     const recipesQuery = `
         SELECT r.name, r.description, r.userId, r.createdAt, r.updatedAt
         FROM recipe_ingredients ri
-        JOIN resipes r ON ri.resipeId = r.id
+        JOIN recipes r ON ri.recipeId = r.id
         WHERE ri.id = ?`;
     const recipe = await executeQuery(recipesQuery, [recipe_ingredientsId]);
 

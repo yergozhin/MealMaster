@@ -16,7 +16,14 @@ function ViewRecipe() {
     }
     return (
         <>
-        <h1>Recipe with ID = {recipe.recipe[0].id}</h1>
+        <h1>Recipe: {recipe.recipe[0].name}</h1>
+        {<img src={recipe.recipe[0].imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
+        <h2>Ingredients:</h2>
+        <div>{recipe.ingredients.map((ingredient) => 
+        <div key={ingredient.id}>
+            <h4>Name: {ingredient.name}({ingredient.quantity} {ingredient.unit})</h4>
+        </div>
+        )}</div>
         </>
     );
 }

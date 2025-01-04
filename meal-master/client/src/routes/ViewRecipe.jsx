@@ -1,9 +1,17 @@
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 function ViewRecipe() {
+    const navigate = useNavigate();
     const { id } = useParams();
     const [recipe, setRecipe] = useState(null);
+    const goToDeleteRecipe = (id) => {
+        navigate(`/deleteRecipe/${id}`);
+    };
+    const goToUpdateRecipe = (id) => {
+        navigate(`/updateRecipe/${id}`);
+    };
     useEffect(() => {
         fetch(`/api/recipes/${id}`)
             .then((response) => response.json())
@@ -16,6 +24,7 @@ function ViewRecipe() {
     if (!recipe) {
         return <p>Loading...</p>;
     }
+    
     return (
         <>
             <h1>Recipe: {recipe.recipe[0].name}</h1>
@@ -28,6 +37,8 @@ function ViewRecipe() {
             )}</div>
             <h2>Description: </h2>
             <div>{recipe.recipe[0].description}</div>
+            <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >Update Recipe</button>
+            <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>Delete Recipe</button>
         </>
     );
 }

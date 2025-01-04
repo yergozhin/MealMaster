@@ -8,6 +8,9 @@ import LoginForm from './auth/LoginForm';
 import RegisterForm from './auth/RegisterForm';
 import ProtectedRoute from './auth/ProtectedRoute';
 import ViewRecipe from './routes/ViewRecipe.jsx';
+import AdminRoute from './auth/AdminRoute';
+import DeleteRecipe from './routes/DeleteRecipe.jsx';
+import UpdateRecipe from './routes/UpdateRecipe.jsx';
 
 const App = () => (
   <Router>
@@ -19,6 +22,8 @@ const App = () => (
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/recipe/:id" element={<ViewRecipe />} />
+      <Route path="/deleteRecipe/:id" element={<AdminRoute><DeleteRecipe /></AdminRoute>} />
+      <Route path="/updateRecipe/:id" element={<AdminRoute><UpdateRecipe /></AdminRoute>} />
     </Routes>
   </Router>
 );

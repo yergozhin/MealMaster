@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
-const AdminRoute = ({ children }) => {
+const AdminRouteRecipe = ({ children }) => {
     const { id } = useParams();
     const [user, setUser] = useState(null);
     const [recipe, setRecipe] = useState(null);
@@ -64,4 +64,4 @@ const AdminRoute = ({ children }) => {
     return children; // Render the protected component if logged in
 };
 
-export default AdminRoute;
+export default AdminRouteRecipe;

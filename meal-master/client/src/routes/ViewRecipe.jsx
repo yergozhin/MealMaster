@@ -72,7 +72,7 @@ function ViewRecipe() {
             )}</div>
             <h2>Description: </h2>
             <div>{recipe.recipe[0].description}</div>
-            {user && user.length > 0 ? (
+            {user && user.length > 0 && (user[0].roleId === 1 || user[0].id === recipe.recipe[0].userId) ? (
                 <>
             <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >Update Recipe</button>
             <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>Delete Recipe</button></>):(<></>)}

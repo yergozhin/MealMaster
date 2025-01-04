@@ -6,6 +6,7 @@ function ViewRecipe() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [recipe, setRecipe] = useState(null);
+    const [user, setUser] = useState(null);
     const goToDeleteRecipe = (id) => {
         navigate(`/deleteRecipe/${id}`);
     };
@@ -21,6 +22,40 @@ function ViewRecipe() {
             })
             .catch((error) => console.error('Error fetching recipe:', error));
     }, [id]);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            fetch('/auth/check-login', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `${token}`,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.message === 'User is logged in') {
+                        fetch(`/api/users/${data.user.userId}`)
+                            .then((response) => response.json())
+                            .then((userData) => {
+                                setUser(userData); // Set the full user data
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching user data:', error);
+                                setUser(null); // In case of error, clear user data
+                            });
+                    } else {
+                        setUser(null);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error during login check:', error);
+                    setUser(null);
+                });
+        } else {
+            setUser(null);
+        }
+    }, []);
     if (!recipe) {
         return <p>Loading...</p>;
     }
@@ -37,8 +72,10 @@ function ViewRecipe() {
             )}</div>
             <h2>Description: </h2>
             <div>{recipe.recipe[0].description}</div>
+            {user && user.length > 0 ? (
+                <>
             <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >Update Recipe</button>
-            <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>Delete Recipe</button>
+            <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>Delete Recipe</button></>):(<></>)}
         </>
     );
 }

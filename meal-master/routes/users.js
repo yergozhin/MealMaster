@@ -54,8 +54,8 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Role ID must be a positive integer.' });
     }
     
-    if(newRoleId !== 1 && newRoleId !== 2 && newRoleId !== 3){
-        newRoleId = 3;
+    if(newRoleId !== 1 && newRoleId !== 2){
+        newRoleId = 2;
     }
     try {
         const newUser = { name, email, passwordHash, roleId };
@@ -96,7 +96,7 @@ router.put('/:id', async (req, res) => {
             name,
             email,
             passwordHash,
-            roleId: roleId || 3 
+            roleId: roleId || 2
         };
 
         await updateRecord('users', id, updatedUser);

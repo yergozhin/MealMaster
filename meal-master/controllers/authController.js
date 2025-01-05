@@ -19,7 +19,7 @@ exports.registerUser = async (req, res) => {
   }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const roleId = 1;
+    const roleId = 2;
     const [result] = await db.query('INSERT INTO users (name, email, passwordHash, roleId) VALUES (?, ?, ?, ?)', [
       name,
       email,
@@ -43,7 +43,7 @@ exports.loginUser = async (req, res) => {
     if (rows.length === 0) return res.status(404).json({ error: 'User not found' });
 
     const user = rows[0];
-    if (user.id != 1 && user.id != 2 && user.id != 3) {
+    if (user.id != 1 && user.id != 2) {
       const isMatch = await bcrypt.compare(password, user.passwordHash);
 
       if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });

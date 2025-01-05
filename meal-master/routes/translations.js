@@ -42,9 +42,34 @@ router.post('/', async (req, res) => {
     if (typeof text !== 'string' || text.trim().length < 1) {
         return res.status(400).json({ error: 'Text must be a non-empty string.' });
     }
+
+    if (languageCode !== 'en' && languageCode !== 'es') {
+        return res.status(400).json({ error: 'For now we can use only english or spanish translation.' });
+    }
     try {
-        const newTranslation = { translationKey, languageCode, text };
-        await addRecord('translations', newTranslation);
+        const mainExists = await db.query(
+            'SELECT * FROM translations WHERE text = ? AND translationKey = ? LIMIT 1',
+            [text, translationKey]
+        );
+        if (!mainExists.length) {
+            const newTranslation = { translationKey, languageCode, text };
+            await addRecord('translations', newTranslation);
+        }
+        const reverseExists = await db.query(
+            'SELECT * FROM translations WHERE text = ? AND translationKey = ? LIMIT 1',
+            [text, translationKey]
+        );
+        if (!reverseExists.length) {
+            if (languageCode == 'en') {
+                const reverseLang = 'es';
+                const reverseTranslation = { text, reverseLang, translationKey };
+                await addRecord('translations', reverseTranslation);
+            } else {
+                const reverseLang = 'en';
+                const reverseTranslation = { text, reverseLang, translationKey };
+                await addRecord('translations', reverseTranslation);
+            }
+        }
         res.status(201).json({ message: 'Translation added successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });

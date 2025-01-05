@@ -4,8 +4,97 @@ import profileAvatar from '../profile-picture.png'
 import '../App.css';
 import { useNavigate } from "react-router-dom";
 
-function Home() {
+function Main() {
     const [user, setUser] = useState(null);
+    const fetchTranslation = async (word, lang) => {
+        console.log(word,lang);
+        const response = await fetch(`/api/translations/translate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ word, lang }), // Send data in the body
+        });
+        if (response.ok) {
+            const data = await response.json();
+            //console.log("Translation:", data.translation);
+            return data.translation;
+        } else {
+            //console.error("Error fetching translation:", response.status);
+        }
+        
+    };
+    const [language, setLanguage] = useState('en');  // Default language is 'en'
+    const [translations, setTranslations] = useState({
+        Welcome: '',
+        Pleaselogin: '',
+        Home: '',
+        MyRecipes: '',
+        AddRecipe: '',
+        BrowseRecipes: '',
+        SearchPlaceholder: '',
+        FavoriteRecipes: '',
+        Register: '',
+        Login: '',
+        Logout: '',
+        Profile: '',
+        Settings: '',
+        Title: '',
+        Description: '',
+        User: '',
+        Recipes: '',
+        Delicious: '',
+        ViewRecipe: '',
+        AddToFavorites: '',
+        First: '',
+        Previous: '',
+        Next: '',
+        Last: '',
+    });
+    const changeLanguage = (lang) => {
+        setLanguage(lang);
+        localStorage.setItem('language', lang);
+    };
+    useEffect(() => {
+        const savedLanguage = localStorage.getItem('language');
+        if (savedLanguage) {
+            setLanguage(savedLanguage);
+        }
+    }, []);
+    useEffect(() => {
+        const fetchPageTranslations = async () => {
+            const translationsData = {
+                Welcome: await fetchTranslation('Welcome', language),
+                Pleaselogin: await fetchTranslation('Please log in', language),
+                Home: await fetchTranslation('Home', language),
+                MyRecipes: await fetchTranslation('My Recipes', language),
+                AddRecipe: await fetchTranslation('Add Recipe', language),
+                BrowseRecipes: await fetchTranslation('Browse Recipes', language),
+                SearchPlaceholder: await fetchTranslation('Search for recipes...', language),
+                FavoriteRecipes: await fetchTranslation('Favorite Recipes', language),
+                Register: await fetchTranslation('Register', language),
+                Login: await fetchTranslation('Login', language),
+                Logout: await fetchTranslation('Logout', language),
+                Profile: await fetchTranslation('Profile', language),
+                Settings: await fetchTranslation('Settings', language),
+                Title: await fetchTranslation('Title', language),
+                Description: await fetchTranslation('Description', language),
+                User: await fetchTranslation('User', language),
+                Recipes: await fetchTranslation('Recipes', language),
+                Delicious: await fetchTranslation('Delicious', language),
+                ViewRecipe: await fetchTranslation('View Recipe', language),
+                AddToFavorites: await fetchTranslation('Add To Favorites', language),
+                First: await fetchTranslation('First', language),
+                Previous: await fetchTranslation('Previous', language),
+                Next: await fetchTranslation('Next', language),
+                Last: await fetchTranslation('Last', language),
+                
+            };
+            setTranslations(translationsData);
+        };
+
+        fetchPageTranslations();
+    }, [language]);
     useEffect(() => {
         const token = localStorage.getItem('token');
 
@@ -72,6 +161,9 @@ function Home() {
     const goToViewRecipe = (id) => {
         navigate(`/recipe/${id}`);
     };
+    const goToAddTranslation = () => {
+        navigate("/addTranslation");
+    };
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
@@ -115,9 +207,9 @@ function Home() {
             <header>
                 <div>
                     {user && user.length > 0 ? (
-                        <h1>Welcome, User {user[0].id}!</h1>
+                        <h1>{translations.Welcome}, {translations.User} {user[0].id}!</h1>
                     ) : (
-                        <h1>Please log in</h1>
+                        <h1>{translations.Pleaselogin}</h1>
                     )}
                 </div>
                 <div className="container">
@@ -131,20 +223,20 @@ function Home() {
                     </div>
                     <div className="section">
                         <div className="subsection">
-                            <button>Home</button>
+                            <button>{translations.Home}</button>
                         </div>
-                        {user && user.length > 0  ? (<>
+                        {user && user.length > 0 ? (<>
                             <div className="subsection">
-                                <button>My Recipes</button>
+                                <button>{translations.MyRecipes}</button>
                             </div>
                             <div className="subsection">
-                                <button onClick={goToAddRecipe}>Add Recipe</button>
+                                <button onClick={goToAddRecipe}>{translations.AddRecipe}</button>
                             </div>
                         </>
                         ) : (<></>)}
                         <div className="subsection">
                             <div className="filter-dropdown">
-                                <button className="filter-dropdown-button">Browse Recipes</button>
+                                <button className="filter-dropdown-button">{translations.BrowseRecipes}</button>
                                 <div className="filter-dropdown-content">
                                     <label><input type="checkbox" className="filter" name="breakfast" />Breakfast</label>
                                     <label><input type="checkbox" className="filter" name="lunch" />Lunch</label>
@@ -152,9 +244,15 @@ function Home() {
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            <button onClick={() => changeLanguage('en')}>English</button>
+                            <button onClick={() => changeLanguage('es')}>Español</button>
+                            {user && user.length > 0 && user[0].roleId === 1? 
+                            <button onClick={goToAddTranslation}>Add Translation</button> : <></>}
+                        </div>
                     </div>
                     <div className="section">
-                        {user && user.length > 0  ? (
+                        {user && user.length > 0 ? (
                             <>
                                 <div className="subsection">
                                     <div className="search-recipes">
@@ -162,7 +260,7 @@ function Home() {
                                     </div>
                                 </div>
                                 <div className="subsection">
-                                    <button>Favorite Recipes</button>
+                                    <button>{translations.FavoriteRecipes}</button>
                                 </div>
                                 <div className="subsection">
                                     <div className="user-profile">
@@ -171,9 +269,9 @@ function Home() {
                                             {user[0].name}
                                         </button>
                                         <div className="profile-dropdown-menu">
-                                            <button onClick={goToProfile}>My Profile</button>
-                                            <button onClick={goToSettings}>Settings</button>
-                                            <button onClick={logout}>Logout</button>
+                                            <button onClick={goToProfile}>{translations.Profile}</button>
+                                            <button onClick={goToSettings}>{translations.Settings}</button>
+                                            <button onClick={logout}>{translations.Logout}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -182,10 +280,10 @@ function Home() {
                             <>
                                 <div className="auth-buttons-wrapper">
                                     <div className="subsection">
-                                        <button className="authButton" onClick={goToRegister}>Register</button>
+                                        <button className="authButton" onClick={goToRegister}>{translations.Register}</button>
                                     </div>
                                     <div className="subsection">
-                                        <button className="authButton" onClick={goToLogin}>Login</button>
+                                        <button className="authButton" onClick={goToLogin}>{translations.Login}</button>
                                     </div>
                                 </div>
                             </>
@@ -194,15 +292,15 @@ function Home() {
                 </div>
             </header>
             <main>
-                <h2>Recipes</h2>
+                <h2>{translations.Recipes}</h2>
                 <div className="recipe-card-container page-1"> {currentItems.map((recipe) => (
                     <div className="recipe-card" key={recipe.id}>
                         {<img src={recipe.imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
                         <h3>{recipe.name}</h3>
-                        <p className="recipe-description">Delicious {recipe.name}!</p>
-                        <button onClick={() => goToViewRecipe(recipe.id)} className="recipe-button">View Recipe</button>
+                        <p className="recipe-description">{translations.Delicious} {recipe.name}!</p>
+                        <button onClick={() => goToViewRecipe(recipe.id)} className="recipe-button">{translations.ViewRecipe}</button>
                         {user && user.length > 0 ? (
-                            <><button className="addtofavorites-button">Add To Favorites</button>
+                            <><button className="addtofavorites-button">{translations.AddToFavorites}</button>
                                 <div className="rating">
                                     <button className="star" data-value="1">☆</button>
                                     <button className="star" data-value="2">☆</button>
@@ -217,8 +315,8 @@ function Home() {
                     </div>))}
                 </div>
                 <div className="pagination">
-                    <button onClick={() => handleChangePage(1)} disabled={currentPage === 1} className="first-button">First</button>
-                    <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1} className="prev-button">Previous</button>
+                    <button onClick={() => handleChangePage(1)} disabled={currentPage === 1} className="first-button">{translations.First}</button>
+                    <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1} className="prev-button">{translations.Previous}</button>
                     {currentPage > 3 && <span>...</span>}
 
                     {getPageNumbers().map((page) => (
@@ -232,8 +330,8 @@ function Home() {
                     ))}
 
                     {currentPage < totalPages - 2 && <span>...</span>}
-                    <button onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages} className="next-button">Next</button>
-                    <button onClick={() => handleChangePage(totalPages)} disabled={currentPage === totalPages} className="last-button">Last</button>
+                    <button onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages} className="next-button">{translations.Next}</button>
+                    <button onClick={() => handleChangePage(totalPages)} disabled={currentPage === totalPages} className="last-button">{translations.Last}</button>
                 </div>
             </main>
             <footer>
@@ -250,4 +348,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Main;

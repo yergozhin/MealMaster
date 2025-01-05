@@ -25,19 +25,17 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
-        // Validate file type
+
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (!allowedTypes.includes(file.mimetype)) {
             return cb(new Error('Invalid file type. Only JPG, PNG, and GIF are allowed.'));
         }
         cb(null, true);
     },
-    limits: { fileSize: 2 * 1024 * 1024 }, // Limit file size to 2MB
+    limits: { fileSize: 2 * 1024 * 1024 },
 });
 
-// Routes
 
-// Get all recipes
 router.get('/', async (req, res) => {
     try {
         const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt', 'imageUrl']);
@@ -47,9 +45,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get recipe by ID
+
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'ID must be a positive integer.' });
+    }
     try {
         const { recipe, ingredients } = await getRecipeDetails(id);
         res.json({ recipe, ingredients });
@@ -58,27 +59,32 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Add a new recipe
+
 router.post('/', upload.single('image'), async (req, res) => {
-    //console.log(req.file);
+
     const { name, description, userId, ingredients } = req.body;
     let imageUrl = null;
 
-    // Handle uploaded file
     if (req.file) {
         imageUrl = `/uploads/${req.file.filename}`;
-        //console.log('Uploaded image URL:', imageUrl);
+
     }
     let parsedIngredients = [];
     if (ingredients) {
-        parsedIngredients = JSON.parse(ingredients); // Convert back to an array
-    }
-    // Validate required fields
-    if (!name || !description || !userId || parsedIngredients.length === 0) {
-        //console.log(req.body);
-        return res.status(400).json({ error: 'Missing required fields' });
+        try {
+            parsedIngredients = JSON.parse(ingredients);
+        } catch (error) {
+            return res.status(400).json({ error: 'Invalid ingredients format' });
+        }
     }
 
+    if (!name || !description || !userId || parsedIngredients.length === 0) {
+
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (isNaN(userId) || parseInt(userId) <= 0 || !Number.isInteger(Number(userId))) {
+        return res.status(400).json({ error: 'Invalid userId, it must be a positive integer.' });
+    }
     try {
         const [recipeResult] = await db.query(
             'INSERT INTO recipes (name, description, userId, imageUrl) VALUES (?, ?, ?, ?)',
@@ -91,23 +97,23 @@ router.post('/', upload.single('image'), async (req, res) => {
                 throw new Error('Invalid ingredient details');
             }
             let ingredientId;
-            // Check if the ingredient already exists
+
             const [existingIngredient] = await db.query(
                 'SELECT id FROM ingredients WHERE name = ?',
                 [name]
             );
             if (existingIngredient.length > 0) {
-                // Use the existing ingredient
+
                 ingredientId = existingIngredient[0].id;
             } else {
-                // Insert the new ingredient
+
                 const [ingredientResult] = await db.query(
                     'INSERT INTO ingredients (name, unit) VALUES (?, ?)',
                     [name, unit]
                 );
                 ingredientId = ingredientResult.insertId;
             }
-            // Associate the ingredient with the recipe
+
             await db.query(
                 'INSERT INTO recipe_ingredients (recipeId, ingredientId, quantity, unit, notes) VALUES (?, ?, ?, ?, ?)',
                 [recipeId, ingredientId, quantity, unit, notes]
@@ -123,12 +129,22 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { name, description, userId } = req.body;
 
-    if (!name || !description || !userId) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'Invalid id, it must be a positive integer.' });
+    }
+
+    if (!name || !description) {
+        return res.status(400).json({ error: 'Missing required fields: name or description' });
+    }
+
+    if (userId !== undefined) {
+        if (isNaN(userId) || parseInt(userId) <= 0 || !Number.isInteger(Number(userId))) {
+            return res.status(400).json({ error: 'Invalid userId, it must be a positive integer.' });
+        }
     }
 
     try {
-        const updatedRecipe = { name, description, userId };
+        const updatedRecipe = { name, description, userId: userId || null }; 
         await updateRecord('recipes', id, updatedRecipe);
         res.json({ message: 'Recipe updated successfully' });
     } catch (error) {
@@ -136,9 +152,12 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
-
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'Invalid id, it must be a positive integer.' });
+    }
     try {
         await deleteRecord('recipes', id);
         res.json({ message: 'Recipe deleted successfully' });
@@ -148,6 +167,9 @@ router.delete('/:id', async (req, res) => {
 });
 
 const getRecipeDetails = async (recipeId) => {
+    if (!recipeId || isNaN(recipeId) || parseInt(recipeId) <= 0 || !Number.isInteger(Number(recipeId))) {
+        throw new Error('Invalid recipeId, it must be a positive integer.');
+    }
     const recipeQuery = `SELECT * FROM recipes WHERE id = ?`;
     const recipe = await executeQuery(recipeQuery, [recipeId]);
 

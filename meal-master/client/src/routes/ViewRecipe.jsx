@@ -38,11 +38,11 @@ function ViewRecipe() {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); // Set the full user data
+                                setUser(userData);
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); // In case of error, clear user data
+                                setUser(null);
                             });
                     } else {
                         setUser(null);

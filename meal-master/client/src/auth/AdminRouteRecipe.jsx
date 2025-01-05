@@ -21,11 +21,11 @@ const AdminRouteRecipe = ({ children }) => {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); 
+                                setUser(userData);
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); 
+                                setUser(null);
                             });
                     } else {
                         setUser(null);
@@ -48,20 +48,20 @@ const AdminRouteRecipe = ({ children }) => {
             })
             .catch((error) => console.error('Error fetching recipe:', error));
     }, [id]);
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
 
     if (!token) {
-        return <Navigate to="/login" replace />; 
+        return <Navigate to="/login" replace />;
     }
     if (!recipe) {
         return <p>Loading...</p>;
     }
-    
-    if(user && user.length > 0 && (user[0].roleId !== 1 && user[0].id !== recipe.recipe[0].userId)) {
+
+    if (user && user.length > 0 && (user[0].roleId !== 1 && user[0].id !== recipe.recipe[0].userId)) {
         return <div>You don't have access to this.</div>;
     }
 
-    return children; 
+    return children;
 };
 
 export default AdminRouteRecipe;

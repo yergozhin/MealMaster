@@ -19,11 +19,11 @@ const AdminRoute = ({ children }) => {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); 
+                                setUser(userData);
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); 
+                                setUser(null);
                             });
                     } else {
                         setUser(null);
@@ -37,16 +37,16 @@ const AdminRoute = ({ children }) => {
             setUser(null);
         }
     }, []);
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
 
     if (!token) {
-        return <Navigate to="/login" replace />; 
+        return <Navigate to="/login" replace />;
     }
-    
-    if(user && user.length > 0 && user[0].roleId !== 1) {
+
+    if (user && user.length > 0 && user[0].roleId !== 1) {
         return <div>You don't have access to this.</div>;
     }
-    
+
     return children;
 };
 

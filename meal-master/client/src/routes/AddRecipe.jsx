@@ -50,11 +50,11 @@ const AddRecipe = () => {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); // Set the full user data
+                                setUser(userData);
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); // In case of error, clear user data
+                                setUser(null);
                             });
                     } else {
                         setUser(null);
@@ -103,17 +103,17 @@ const AddRecipe = () => {
                 return;
             }
         });
-        const formData = new FormData(); // Use FormData for handling file uploads
+        const formData = new FormData();
 
-    formData.append('name', recipe.name);
-    formData.append('description', recipe.description);
-    formData.append('userId', user[0].id);
-    formData.append('image', recipe.imageUrl); // Append the file for image upload
-    formData.append('ingredients', JSON.stringify(ingredients));
+        formData.append('name', recipe.name);
+        formData.append('description', recipe.description);
+        formData.append('userId', user[0].id);
+        formData.append('image', recipe.imageUrl);
+        formData.append('ingredients', JSON.stringify(ingredients));
         try {
             const response = await fetch('/api/recipes', {
                 method: 'POST',
-                body: formData, // Send the FormData with the image file
+                body: formData,
             });
 
             const result = await response.json();

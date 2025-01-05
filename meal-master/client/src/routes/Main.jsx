@@ -7,24 +7,21 @@ import { useNavigate } from "react-router-dom";
 function Main() {
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
-        console.log(word,lang);
+        console.log(word, lang);
         const response = await fetch(`/api/translations/translate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ word, lang }), // Send data in the body
+            body: JSON.stringify({ word, lang }),
         });
         if (response.ok) {
             const data = await response.json();
-            //console.log("Translation:", data.translation);
             return data.translation;
-        } else {
-            //console.error("Error fetching translation:", response.status);
         }
-        
+
     };
-    const [language, setLanguage] = useState('en');  // Default language is 'en'
+    const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({
         Welcome: '',
         Pleaselogin: '',
@@ -88,7 +85,7 @@ function Main() {
                 Previous: await fetchTranslation('Previous', language),
                 Next: await fetchTranslation('Next', language),
                 Last: await fetchTranslation('Last', language),
-                
+
             };
             setTranslations(translationsData);
         };
@@ -111,11 +108,11 @@ function Main() {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); // Set the full user data
+                                setUser(userData);
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); // In case of error, clear user data
+                                setUser(null);
                             });
                     } else {
                         setUser(null);
@@ -181,13 +178,12 @@ function Main() {
 
     const getPageNumbers = () => {
         const pageNumbers = [];
-        const maxPageLinks = 5; // Maximum visible page links
+        const maxPageLinks = 5;
         const halfWindow = Math.floor(maxPageLinks / 2);
 
         let start = Math.max(1, currentPage - halfWindow);
         let end = Math.min(totalPages, currentPage + halfWindow);
 
-        // Adjust the range if at the beginning or end
         if (currentPage <= halfWindow) {
             end = Math.min(totalPages, start + maxPageLinks - 1);
         }
@@ -247,8 +243,8 @@ function Main() {
                         <div>
                             <button onClick={() => changeLanguage('en')}>English</button>
                             <button onClick={() => changeLanguage('es')}>Español</button>
-                            {user && user.length > 0 && user[0].roleId === 1? 
-                            <button onClick={goToAddTranslation}>Add Translation</button> : <></>}
+                            {user && user.length > 0 && user[0].roleId === 1 ?
+                                <button onClick={goToAddTranslation}>Add Translation</button> : <></>}
                         </div>
                     </div>
                     <div className="section">

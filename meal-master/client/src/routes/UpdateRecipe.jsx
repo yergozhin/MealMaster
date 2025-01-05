@@ -1,7 +1,7 @@
 function UpdateRecipe() {
     return (
         <>
-        <h1>You are in Update recipe</h1>
+            <h1>You are in Update recipe</h1>
         </>
     );
 }

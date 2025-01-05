@@ -11,17 +11,17 @@ const RegisterForm = () => {
       alert('Name is required');
       return;
     }
-    
+
     if (!email || !email.includes('@') || !email.includes('.')) {
       alert('Invalid email format');
       return;
     }
-    
+
     if (!password || password.length < 6) {
       alert('Password must be at least 6 characters');
       return;
     }
-    
+
     const response = await fetch('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

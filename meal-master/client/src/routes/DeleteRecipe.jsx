@@ -1,7 +1,7 @@
 function DeleteRecipe() {
     return (
         <>
-        <h1>You are in Delete recipe</h1>
+            <h1>You are in Delete recipe</h1>
         </>
     );
 }

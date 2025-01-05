@@ -13,6 +13,9 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'Invalid id, it must be a positive integer.' });
+    }
     try {
         const { recipe, ingredient, recipe_ingredients } = await getRecipeAndIngredientDetails(id);
         res.json({ recipe, ingredient, recipe_ingredients });
@@ -27,7 +30,24 @@ router.post('/', async (req, res) => {
     if (!recipeId || !ingredientId || !quantity || !unit || !notes) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
+    if (isNaN(recipeId) || parseInt(recipeId) <= 0 || !Number.isInteger(Number(recipeId))) {
+        return res.status(400).json({ error: 'Invalid recipeId, it must be a positive integer.' });
+    }
 
+    if (isNaN(ingredientId) || parseInt(ingredientId) <= 0 || !Number.isInteger(Number(ingredientId))) {
+        return res.status(400).json({ error: 'Invalid ingredientId, it must be a positive integer.' });
+    }
+
+    if (isNaN(quantity) || quantity <= 0) {
+        return res.status(400).json({ error: 'Quantity must be a positive number.' });
+    }
+    if (typeof unit !== 'string' || unit.trim() === '') {
+        return res.status(400).json({ error: 'Unit must be a non-empty string.' });
+    }
+
+    if (typeof notes !== 'string' || notes.trim() === '') {
+        return res.status(400).json({ error: 'Notes must be a non-empty string.' });
+    }
     try {
         const newRecipe_ingredients = { recipeId, ingredientId, quantity, unit, notes };
         await addRecord('recipe_ingredients', newRecipe_ingredients);
@@ -44,7 +64,24 @@ router.put('/:id', async (req, res) => {
     if (!recipeId || !ingredientId || !quantity || !unit || !notes) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
+    if (isNaN(recipeId) || parseInt(recipeId) <= 0 || !Number.isInteger(Number(recipeId))) {
+        return res.status(400).json({ error: 'Invalid recipeId, it must be a positive integer.' });
+    }
 
+    if (isNaN(ingredientId) || parseInt(ingredientId) <= 0 || !Number.isInteger(Number(ingredientId))) {
+        return res.status(400).json({ error: 'Invalid ingredientId, it must be a positive integer.' });
+    }
+    if (isNaN(quantity) || quantity <= 0) {
+        return res.status(400).json({ error: 'Quantity must be a positive number.' });
+    }
+
+    if (typeof unit !== 'string' || unit.trim() === '') {
+        return res.status(400).json({ error: 'Unit must be a non-empty string.' });
+    }
+
+    if (typeof notes !== 'string' || notes.trim() === '') {
+        return res.status(400).json({ error: 'Notes must be a non-empty string.' });
+    }
     try {
         const updatedRecipe_ingredients = { recipeId, ingredientId, quantity, unit, notes };
         await updateRecord('recipe_ingredients', id, updatedRecipe_ingredients);
@@ -57,6 +94,9 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
+    if (isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'Invalid ID, it must be a positive integer.' });
+    }
     try {
         await deleteRecord('recipe_ingredients', id);
         res.json({ message: 'Recipe_Ingredients deleted successfully' });
@@ -68,6 +108,10 @@ router.delete('/:id', async (req, res) => {
 const getRecipeAndIngredientDetails = async (recipe_ingredientsId) => {
     const recipe_ingredientsQuery = `SELECT * FROM recipe_ingredients WHERE id = ?`;
     const recipe_ingredients = await executeQuery(recipe_ingredientsQuery, [recipe_ingredientsId]);
+
+    if (recipe_ingredients.length === 0) {
+        throw new Error('Recipe_ingredient not found');
+    }
 
     const recipesQuery = `
         SELECT r.name, r.description, r.userId, r.createdAt, r.updatedAt

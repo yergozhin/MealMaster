@@ -1,29 +1,37 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
-
-function AddRecipe() {
+const AddRecipe = () => {
     const navigate = useNavigate();
-    const [status, setStatus] = useState(null);
-
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        userId: "",
+    const [recipe, setRecipe] = useState({
+        name: '',
+        description: '',
+        userId: '',
         imageUrl: null,
     });
-    const handleChange = (e) => {
+    const [ingredients, setIngredients] = useState([
+        { name: '', quantity: '', unit: '', notes: '' },
+    ]);
+    const [message, setMessage] = useState('');
+
+    const handleRecipeChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
+        setRecipe((prev) => ({ ...prev, [name]: value }));
     };
     const handleFileChange = (e) => {
-        setFormData((prevData) => ({
+        setRecipe((prevData) => ({
             ...prevData,
-            image: e.target.files[0],
+            imageUrl: e.target.files[0],
         }));
+    };
+    const handleIngredientChange = (index, field, value) => {
+        const updatedIngredients = [...ingredients];
+        updatedIngredients[index][field] = value;
+        setIngredients(updatedIngredients);
+    };
+
+    const addIngredientField = () => {
+        setIngredients([...ingredients, { name: '', quantity: '', unit: '', notes: '' }]);
     };
     const [user, setUser] = useState(null);
     useEffect(() => {
@@ -42,11 +50,11 @@ function AddRecipe() {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); // Set the full user data
+                                setUser(userData);
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); // In case of error, clear user data
+                                setUser(null);
                             });
                     } else {
                         setUser(null);
@@ -61,61 +69,87 @@ function AddRecipe() {
         }
     }, []);
     const handleSubmit = async (e) => {
-        if(!user){
-            navigate("/");
+        e.preventDefault();
+        if (!recipe.name.trim()) {
+            alert('Recipe name is required');
             return;
         }
-        e.preventDefault();
-        const data = new FormData();
-        data.append('name', formData.name);
-        data.append('description', formData.description);
-        data.append('userId', user[0].id);
-        if (formData.image) {
-            data.append('image', formData.image);
+
+        if (!recipe.description.trim()) {
+            alert('Description is required');
+            return;
         }
 
+        if (!recipe.imageUrl) {
+            alert('Image is required');
+            return;
+        }
+
+        ingredients.forEach((ingredient, index) => {
+            if (!ingredient.name.trim()) {
+                alert(`Ingredient ${index + 1}: Name is required`);
+                return;
+            }
+            if (!ingredient.quantity || ingredient.quantity <= 0) {
+                alert(`Ingredient ${index + 1}: Quantity must be a positive number`);
+                return;
+            }
+            if (!ingredient.unit.trim()) {
+                alert(`Ingredient ${index + 1}: Unit is required`);
+                return;
+            }
+            if (!ingredient.notes.trim()) {
+                alert(`Ingredient ${index + 1}: Notes are required`);
+                return;
+            }
+        });
+        const formData = new FormData();
+
+        formData.append('name', recipe.name);
+        formData.append('description', recipe.description);
+        formData.append('userId', user[0].id);
+        formData.append('image', recipe.imageUrl);
+        formData.append('ingredients', JSON.stringify(ingredients));
         try {
             const response = await fetch('/api/recipes', {
                 method: 'POST',
-                body: data,
+                body: formData,
             });
 
+            const result = await response.json();
             if (response.ok) {
-                setStatus('Recipe submitted successfully!');
+                setMessage(`Recipe added successfully! ID: ${result.id}`);
             } else {
-                const errorData = await response.json();
-                setStatus(`Error: ${errorData.error}`);
+                setMessage(`Error: ${result.error}`);
             }
         } catch (error) {
-            setStatus(`Error: ${error.message}`);
+            setMessage('Error: Could not add recipe');
         }
-        setFormData({ name: "", description: "", userId: "", imageUrl: "" });
         navigate("/");
     };
+
     return (
         <div>
-            <h2>Submit a Recipe</h2>
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <h1>Add Recipe</h1>
+            <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="name">Name:</label>
+                    <label>Recipe Name:</label>
                     <input
                         type="text"
-                        id="name"
                         name="name"
-                        value={formData.name}
-                        onChange={handleChange}
+                        value={recipe.name}
+                        onChange={handleRecipeChange}
                         required
                     />
                 </div>
                 <div>
-                    <label htmlFor="description">Description:</label>
+                    <label>Description:</label>
                     <textarea
-                        id="description"
                         name="description"
-                        value={formData.description}
-                        onChange={handleChange}
+                        value={recipe.description}
+                        onChange={handleRecipeChange}
                         required
-                    ></textarea>
+                    />
                 </div>
                 <div>
                     <label htmlFor="image">Image:</label>
@@ -127,10 +161,57 @@ function AddRecipe() {
                         onChange={handleFileChange}
                     />
                 </div>
+                <div>
+                    <h2>Ingredients</h2>
+                    {ingredients.map((ingredient, index) => (
+                        <div key={index}>
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                value={ingredient.name}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'name', e.target.value)
+                                }
+                                required
+                            />
+                            <input
+                                type="number"
+                                placeholder="Quantity"
+                                value={ingredient.quantity}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'quantity', e.target.value)
+                                }
+                                required
+                            />
+                            <input
+                                type="text"
+                                placeholder="Unit (e.g., grams)"
+                                value={ingredient.unit}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'unit', e.target.value)
+                                }
+                                required
+                            />
+                            <input
+                                type="text"
+                                placeholder="Note"
+                                value={ingredient.notes}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'notes', e.target.value)
+                                }
+                                required
+                            />
+                        </div>
+                    ))}
+                </div>
+                <button type="button" onClick={addIngredientField}>
+                    Add More Ingredients
+                </button>
                 <button type="submit">Submit</button>
             </form>
-            {status && <p>{status}</p>}
+            {message && <p>{message}</p>}
         </div>
     );
-}
+};
+
 export default AddRecipe;

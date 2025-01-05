@@ -70,6 +70,39 @@ const AddRecipe = () => {
     }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!recipe.name.trim()) {
+            alert('Recipe name is required');
+            return;
+        }
+
+        if (!recipe.description.trim()) {
+            alert('Description is required');
+            return;
+        }
+
+        if (!recipe.imageUrl) {
+            alert('Image is required');
+            return;
+        }
+
+        ingredients.forEach((ingredient, index) => {
+            if (!ingredient.name.trim()) {
+                alert(`Ingredient ${index + 1}: Name is required`);
+                return;
+            }
+            if (!ingredient.quantity || ingredient.quantity <= 0) {
+                alert(`Ingredient ${index + 1}: Quantity must be a positive number`);
+                return;
+            }
+            if (!ingredient.unit.trim()) {
+                alert(`Ingredient ${index + 1}: Unit is required`);
+                return;
+            }
+            if (!ingredient.notes.trim()) {
+                alert(`Ingredient ${index + 1}: Notes are required`);
+                return;
+            }
+        });
         const formData = new FormData(); // Use FormData for handling file uploads
 
     formData.append('name', recipe.name);

@@ -19,11 +19,11 @@ const AdminRoute = ({ children }) => {
                         fetch(`/api/users/${data.user.userId}`)
                             .then((response) => response.json())
                             .then((userData) => {
-                                setUser(userData); // Set the full user data
+                                setUser(userData); 
                             })
                             .catch((error) => {
                                 console.error('Error fetching user data:', error);
-                                setUser(null); // In case of error, clear user data
+                                setUser(null); 
                             });
                     } else {
                         setUser(null);
@@ -37,17 +37,17 @@ const AdminRoute = ({ children }) => {
             setUser(null);
         }
     }, []);
-    const token = localStorage.getItem('token'); // Check token presence
+    const token = localStorage.getItem('token'); 
 
     if (!token) {
-        return <Navigate to="/login" replace />; // Redirect to login if not logged in
+        return <Navigate to="/login" replace />; 
     }
     
     if(user && user.length > 0 && user[0].roleId !== 1) {
         return <div>You don't have access to this.</div>;
     }
     
-    return children; // Render the protected component if logged in
+    return children;
 };
 
 export default AdminRoute;

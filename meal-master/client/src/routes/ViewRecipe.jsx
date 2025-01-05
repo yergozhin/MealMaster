@@ -59,7 +59,7 @@ function ViewRecipe() {
     if (!recipe) {
         return <p>Loading...</p>;
     }
-    
+
     return (
         <>
             <h1>Recipe: {recipe.recipe[0].name}</h1>
@@ -74,8 +74,8 @@ function ViewRecipe() {
             <div>{recipe.recipe[0].description}</div>
             {user && user.length > 0 && (user[0].roleId === 1 || user[0].id === recipe.recipe[0].userId) ? (
                 <>
-            <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >Update Recipe</button>
-            <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>Delete Recipe</button></>):(<></>)}
+                    <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >Update Recipe</button>
+                    <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>Delete Recipe</button></>) : (<></>)}
         </>
     );
 }

@@ -1,49 +1,66 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  pointer-events: none;
   width: 50px;
   height: auto;
   margin-left: 30px;
   margin-bottom: -20px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
+  pointer-events: none;
+  animation: App-logo-spin infinite 20s linear;
 }
 
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
 }
 
+header {
+  background-color: #282c34;
+  color: white;
+  padding: 20px 0;
+}
 
-nav {
-  display: inline-block;
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+#section1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 30%;
+}
+
+.subsection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .filter-dropdown {
@@ -51,9 +68,22 @@ nav {
   display: inline-block;
 }
 
+.filter-dropdown-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .filter-dropdown-content {
   display: none;
   position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  z-index: 1;
 }
 
 .filter-dropdown-content label {
@@ -76,72 +106,37 @@ nav {
   margin-right: 10px;
 }
 
-.profile-dropdown-menu {
-  display: none;
+.profile-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
 }
 
-.profile-dropdown-menu a {
-  display: block;
+.profile-dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  right: 0;
+  z-index: 1;
+}
+
+.profile-dropdown-menu button {
+  background: none;
+  border: none;
+  color: #333;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
 }
 
 .user-profile:hover .profile-dropdown-menu {
   display: block;
-  display: flex;
-  flex-direction: column;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  height: 100vh;
-  gap: 20px;
-}
-
-.section {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 20px;
-  width: 100%;
-}
-
-.subsection {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-}
-
-.section>.subsection {
-  display: inline-flex;
-  align-items: center;
-}
-
-.section,
-.subsection {
-  flex-wrap: nowrap;
-}
-
-#section1 {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  width: 30%;
-}
-
-.star {
-  font-size: 30px;
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-}
-
-.star:hover {
-  color: gold;
 }
 
 h2 {
@@ -154,14 +149,16 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin-top: 20px;
   justify-content: center;
 }
 
 .recipe-card {
   flex: 1 1 250px;
   max-width: 300px;
-  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .recipe-card:hover {
@@ -176,31 +173,27 @@ h2 {
 
 .recipe-card h3 {
   font-size: 1.5em;
-  margin: 15px 0;
+  margin: 15px;
 }
 
 .recipe-description {
   font-size: 1em;
   color: #666;
-  padding: 0 10px;
-  margin-bottom: 15px;
+  padding: 0 15px 15px;
 }
 
-.recipe-button,
-.addtofavorites-button {
+.recipe-button {
   background-color: #4CAF50;
   color: white;
   border: none;
   padding: 10px 20px;
-  margin: 5px;
+  margin: 15px;
   font-size: 1em;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
-.recipe-button:hover,
-.addtofavorites-button:hover {
+.recipe-button:hover {
   background-color: #45a049;
 }
 
@@ -223,10 +216,6 @@ h2 {
   background-color: #ddd;
 }
 
-main {
-  margin-top: -500px;
-}
-
 footer {
   background-color: #333;
   color: #fff;
@@ -236,7 +225,6 @@ footer {
 
 .footer-container {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   gap: 20px;
 }
@@ -245,7 +233,6 @@ footer {
   color: #fff;
   text-decoration: none;
   font-size: 14px;
-  transition: color 0.3s ease;
 }
 
 .footer-link:hover {

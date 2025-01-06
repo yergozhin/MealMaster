@@ -253,7 +253,7 @@ function Main() {
                     </div>
                     <div className="section">
                         <div className="subsection">
-                            <button>{translations.Home}</button>
+                            <button onClick={navigate('/')}>{translations.Home}</button>
                         </div>
                         {user && user.length > 0 ? (<>
                             <div className="subsection">

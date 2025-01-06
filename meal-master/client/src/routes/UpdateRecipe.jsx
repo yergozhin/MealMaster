@@ -134,7 +134,7 @@ const UpdateRecipe = () => {
     }
 
     return (
-        <div>
+        <div className="update-recipe">
             <h2>Update Recipe</h2>
             <form onSubmit={handleUpdateRecipe}>
                 <div>

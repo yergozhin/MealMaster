@@ -176,6 +176,9 @@ function Main() {
     const goToAddRecipe = () => {
         navigate("/addRecipe");
     };
+    const goToMyRecipes = () => {
+        navigate("/myRecipes");
+    };
     const goToRegister = () => {
         navigate("/register");
     };
@@ -254,7 +257,7 @@ function Main() {
                         </div>
                         {user && user.length > 0 ? (<>
                             <div className="subsection">
-                                <button>{translations.MyRecipes}</button>
+                                <button onClick={goToMyRecipes}>{translations.MyRecipes}</button>
                             </div>
                             <div className="subsection">
                                 <button onClick={goToAddRecipe}>{translations.AddRecipe}</button>

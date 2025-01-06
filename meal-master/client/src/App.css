@@ -346,3 +346,70 @@ footer {
   margin-bottom: 10px;
   color: #444;
 }
+
+/* Scoped styles for ViewRecipe */
+.view-recipe {
+  font-family: 'Arial', sans-serif;
+  margin: 0 auto;
+  padding: 1rem;
+  max-width: 800px;
+  background-color: #ffffff;
+  color: #343a40;
+  line-height: 1.6;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.view-recipe h1, .view-recipe h2 {
+  text-align: center;
+  color: #212529;
+}
+
+.view-recipe p {
+  text-align: center;
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.view-recipe .recipe-image {
+  display: block;
+  max-width: 100%;
+  margin: 1rem auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.view-recipe .ingredients-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.view-recipe .ingredients-container h4 {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.view-recipe .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.view-recipe .buttons button {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-recipe .buttons button:hover {
+  background-color: #0056b3;
+}

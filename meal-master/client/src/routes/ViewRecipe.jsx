@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import '../App.css';
 
 function ViewRecipe() {
     const navigate = useNavigate();
@@ -166,30 +167,38 @@ function ViewRecipe() {
     
 
     return (
-        <>
-        {recipe && recipe.recipe && recipe.recipe[0] ? (
-        <>
-            <h1>{translations.Recipe}: {recipe.recipe[0].name}</h1>
-            {<img src={recipe.recipe[0].imageUrl || '/uploads/default.jpeg'} className="recipe-image" alt="receipeImage" />}
-            <h2>{translations.Ingredients}:</h2>
-            <div>{recipe.ingredients.map((ingredient) =>
-                <div key={ingredient.id}>
-                    <h4>{translations.Name}: {ingredient.name}({ingredient.quantity} {ingredient.unit})</h4>
-                </div>
-            )}</div>
-            <h2>{translations.Description}: </h2>
-            <div>{recipe.recipe[0].description}</div>
-            {user && user.length > 0 && (user[0].roleId === 1 || user[0].id === recipe.recipe[0].userId) ? (
+        <div className="view-recipe">
+            {recipe && recipe.recipe && recipe.recipe[0] ? (
                 <>
-                    <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >{translations.UpdateRecipe}</button>
-                    <button onClick={() => deleteRecipe(recipe.recipe[0].id)}>{translations.DeleteRecipe}</button></>) : (<></>)}
-                    </>
-    ) : (
-        <p>{translations.Loading}</p>
-    )}
-        </>
-        
+                    <h1>{translations.Recipe}: {recipe.recipe[0].name}</h1>
+                    <img 
+                        src={recipe.recipe[0].imageUrl || '/uploads/default.jpeg'} 
+                        className="recipe-image" 
+                        alt="Recipe" 
+                    />
+                    <h2>{translations.Ingredients}:</h2>
+                    <div className="ingredients-container">
+                        {recipe.ingredients.map((ingredient) =>
+                            <div key={ingredient.id}>
+                                <h4>{translations.Name}: {ingredient.name} ({ingredient.quantity} {ingredient.unit})</h4>
+                            </div>
+                        )}
+                    </div>
+                    <h2>{translations.Description}:</h2>
+                    <div>{recipe.recipe[0].description}</div>
+                    {user && user.length > 0 && (user[0].roleId === 1 || user[0].id === recipe.recipe[0].userId) && (
+                        <div className="buttons">
+                            <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)}>{translations.UpdateRecipe}</button>
+                            <button onClick={() => deleteRecipe(recipe.recipe[0].id)}>{translations.DeleteRecipe}</button>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <p>{translations.Loading}</p>
+            )}
+        </div>
     );
+    
     
 }
 export default ViewRecipe;

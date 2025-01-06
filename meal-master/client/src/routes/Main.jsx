@@ -8,7 +8,6 @@ function Main() {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortCriteria, setSortCriteria] = useState('name');
-    const [previousSortCriteria, setPreviousSortCriteria] = useState('');
     const [recipes, setRecipes] = useState([]);
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
@@ -181,9 +180,10 @@ function Main() {
             });
     }, []);
 
-    useEffect(() => {
-        if (sortCriteria !== previousSortCriteria) {
+    /*useEffect(() => {
+        const sortRecipes = () => {
             let sortedRecipes = [...filteredRecipes];
+    
             switch (sortCriteria) {
                 case 'name':
                     sortedRecipes.sort((a, b) => a.name.localeCompare(b.name));
@@ -194,11 +194,15 @@ function Main() {
                 default:
                     break;
             }
-
+    
             setFilteredRecipes(sortedRecipes);
-            setPreviousSortCriteria(sortCriteria);
+        };
+    
+        if (filteredRecipes.length > 0) {
+            sortRecipes();
         }
-    }, [sortCriteria, filteredRecipes, previousSortCriteria]);
+    }, [sortCriteria, filteredRecipes]); */
+    
 
 
     const navigate = useNavigate();

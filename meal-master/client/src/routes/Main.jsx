@@ -5,6 +5,9 @@ import '../App.css';
 import { useNavigate } from "react-router-dom";
 
 function Main() {
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
     const [recipes, setRecipes] = useState([]);
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
@@ -14,11 +17,11 @@ function Main() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ word, lang }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Translation failed');
             }
-    
+
             const data = await response.json();
             return data.translation || word;
         } catch (error) {
@@ -26,7 +29,7 @@ function Main() {
             return word;
         }
     };
-    
+
     const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({
         Welcome: '',
@@ -79,8 +82,8 @@ function Main() {
             translateRecipes();
         }
     }, [recipes, language]);
-    
-      
+
+
     useEffect(() => {
         const savedLanguage = localStorage.getItem('language');
         if (savedLanguage) {
@@ -156,13 +159,24 @@ function Main() {
         }
     }, []);
 
+    useEffect(() => {
+        if (searchQuery) {
+            const filtered = recipes.filter(recipe =>
+                recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredRecipes(filtered);
+        } else {
+            setFilteredRecipes(recipes);
+        }
+    }, [searchQuery, recipes]);
 
-    
+
     useEffect(() => {
         fetch('/api/recipes')
             .then((response) => response.json())
             .then((data) => {
                 setRecipes(data);
+                setFilteredRecipes(data);
             });
     }, []);
 
@@ -210,7 +224,7 @@ function Main() {
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = Array.isArray(recipes) ? recipes.slice(startIndex, startIndex + itemsPerPage) : [];
+    const currentItems = Array.isArray(filteredRecipes) ? filteredRecipes.slice(startIndex, startIndex + itemsPerPage) : [];
 
     const getPageNumbers = () => {
         const pageNumbers = [];
@@ -281,7 +295,13 @@ function Main() {
                             <>
                                 <div className="subsection">
                                     <div className="search-recipes">
-                                        <input type="text" className="search-input" placeholder="Search for recipes..." />
+                                        <input
+                                            type="text"
+                                            placeholder="Search recipes..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+
                                     </div>
                                 </div>
                                 <div className="subsection">

@@ -8,6 +8,7 @@ function Main() {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortCriteria, setSortCriteria] = useState('name');
+    const [previousSortCriteria, setPreviousSortCriteria] = useState('');
     const [recipes, setRecipes] = useState([]);
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
@@ -181,20 +182,23 @@ function Main() {
     }, []);
 
     useEffect(() => {
-        let sortedRecipes = [...filteredRecipes];
-        switch (sortCriteria) {
-            case 'name':
-                sortedRecipes.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'userId':
-                sortedRecipes.sort((a, b) => a.userId - b.userId);
-                break;
-            default:
-                break;
-        }
+        if (sortCriteria !== previousSortCriteria) {
+            let sortedRecipes = [...filteredRecipes];
+            switch (sortCriteria) {
+                case 'name':
+                    sortedRecipes.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'userId':
+                    sortedRecipes.sort((a, b) => a.userId - b.userId);
+                    break;
+                default:
+                    break;
+            }
 
-        setFilteredRecipes(sortedRecipes);
-    }, [ sortCriteria, filteredRecipes]);
+            setFilteredRecipes(sortedRecipes);
+            setPreviousSortCriteria(sortCriteria);
+        }
+    }, [sortCriteria, filteredRecipes, previousSortCriteria]);
 
 
     const navigate = useNavigate();

@@ -285,9 +285,6 @@ function Main() {
                                     </div>
                                 </div>
                                 <div className="subsection">
-                                    <button>{translations.FavoriteRecipes}</button>
-                                </div>
-                                <div className="subsection">
                                     <div className="user-profile">
                                         <button onClick={goToProfile} className="profile-button">
                                             <img src={profileAvatar} className="profile-avatar" alt="profilePicture" />

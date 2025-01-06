@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 function Main() {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-
+    const [sortCriteria, setSortCriteria] = useState('name');
     const [recipes, setRecipes] = useState([]);
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
@@ -64,7 +64,7 @@ function Main() {
     useEffect(() => {
         const translateRecipes = async () => {
             const translatedRecipes = await Promise.all(
-                recipes.map(async (recipe) => {
+                filteredRecipes.map(async (recipe) => {
                     const translatedName = await fetchTranslation(recipe.name || '', language);
                     const translatedDescription = await fetchTranslation(recipe.description || '', language);
 
@@ -75,13 +75,13 @@ function Main() {
                     };
                 })
             );
-            setRecipes(translatedRecipes);
+            setFilteredRecipes(translatedRecipes);
         };
 
-        if (recipes.length > 0) {
+        if (filteredRecipes.length > 0) {
             translateRecipes();
         }
-    }, [recipes, language]);
+    }, [filteredRecipes, language]);
 
 
     useEffect(() => {
@@ -180,6 +180,23 @@ function Main() {
             });
     }, []);
 
+    useEffect(() => {
+        let sortedRecipes = [...filteredRecipes];
+        switch (sortCriteria) {
+            case 'name':
+                sortedRecipes.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'userId':
+                sortedRecipes.sort((a, b) => a.userId - b.userId);
+                break;
+            default:
+                break;
+        }
+
+        setFilteredRecipes(sortedRecipes);
+    }, [ sortCriteria, filteredRecipes]);
+
+
     const navigate = useNavigate();
     const goToProfile = () => {
         navigate("/profile");
@@ -274,14 +291,30 @@ function Main() {
                         </>
                         ) : (<></>)}
                         <div className="subsection">
-                            <div className="filter-dropdown">
-                                <button className="filter-dropdown-button">{translations.BrowseRecipes}</button>
-                                <div className="filter-dropdown-content">
-                                    <label><input type="checkbox" className="filter" name="breakfast" />Breakfast</label>
-                                    <label><input type="checkbox" className="filter" name="lunch" />Lunch</label>
-                                    <label><input type="checkbox" className="filter" name="dinner" />Dinner</label>
+                            <div className="sort-dropdown">
+                                <button className="sort-dropdown-button">Sort Recipes</button>
+                                <div className="sort-dropdown-content">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="name"
+                                            checked={sortCriteria === 'name'}
+                                            onChange={(e) => setSortCriteria(e.target.value)}
+                                        />
+                                        Sort by Name
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="userId"
+                                            checked={sortCriteria === 'userId'}
+                                            onChange={(e) => setSortCriteria(e.target.value)}
+                                        />
+                                        Sort by User ID
+                                    </label>
                                 </div>
                             </div>
+
                         </div>
                         <div>
                             <button onClick={() => changeLanguage('en')}>English</button>

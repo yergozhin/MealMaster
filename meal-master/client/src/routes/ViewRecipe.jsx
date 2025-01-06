@@ -16,9 +16,6 @@ function ViewRecipe() {
         UpdateRecipe: '',
         DeleteRecipe: '',
     });
-    const goToDeleteRecipe = (id) => {
-        navigate(`/deleteRecipe/${id}`);
-    };
     const goToUpdateRecipe = (id) => {
         navigate(`/updateRecipe/${id}`);
     };
@@ -143,6 +140,30 @@ function ViewRecipe() {
     if (!recipe) {
         return <p>Loading...</p>;
     }
+    const deleteRecipe = async (id) => {
+        if (window.confirm(translations.ConfirmDelete || "Are you sure you want to delete this recipe?")) {
+            try {
+                const response = await fetch(`/api/recipes/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `${localStorage.getItem('token')}`,
+                    },
+                });
+    
+                if (response.ok) {
+                    alert('Recipe deleted successfully.');
+                    navigate('/');
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to delete recipe: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error('Error deleting recipe:', error);
+                alert('An error occurred while trying to delete the recipe.');
+            }
+        }
+    };
+    
 
     return (
         <>
@@ -161,7 +182,7 @@ function ViewRecipe() {
             {user && user.length > 0 && (user[0].roleId === 1 || user[0].id === recipe.recipe[0].userId) ? (
                 <>
                     <button onClick={() => goToUpdateRecipe(recipe.recipe[0].id)} >{translations.UpdateRecipe}</button>
-                    <button onClick={() => goToDeleteRecipe(recipe.recipe[0].id)}>{translations.DeleteRecipe}</button></>) : (<></>)}
+                    <button onClick={() => deleteRecipe(recipe.recipe[0].id)}>{translations.DeleteRecipe}</button></>) : (<></>)}
                     </>
     ) : (
         <p>{translations.Loading}</p>

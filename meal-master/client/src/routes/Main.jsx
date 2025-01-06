@@ -5,22 +5,28 @@ import '../App.css';
 import { useNavigate } from "react-router-dom";
 
 function Main() {
+    const [recipes, setRecipes] = useState([]);
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
-        console.log(word, lang);
-        const response = await fetch(`/api/translations/translate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ word, lang }),
-        });
-        if (response.ok) {
+        try {
+            const response = await fetch(`/api/translations/translate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word, lang }),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Translation failed');
+            }
+    
             const data = await response.json();
-            return data.translation;
+            return data.translation || word;
+        } catch (error) {
+            console.error('Error fetching translation:', error);
+            return word;
         }
-
     };
+    
     const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({
         Welcome: '',
@@ -52,6 +58,29 @@ function Main() {
         setLanguage(lang);
         localStorage.setItem('language', lang);
     };
+    useEffect(() => {
+        const translateRecipes = async () => {
+            const translatedRecipes = await Promise.all(
+                recipes.map(async (recipe) => {
+                    const translatedName = await fetchTranslation(recipe.name || '', language);
+                    const translatedDescription = await fetchTranslation(recipe.description || '', language);
+
+                    return {
+                        ...recipe,
+                        name: translatedName,
+                        description: translatedDescription,
+                    };
+                })
+            );
+            setRecipes(translatedRecipes);
+        };
+
+        if (recipes.length > 0) {
+            translateRecipes();
+        }
+    }, [recipes, language]);
+    
+      
     useEffect(() => {
         const savedLanguage = localStorage.getItem('language');
         if (savedLanguage) {
@@ -128,11 +157,13 @@ function Main() {
     }, []);
 
 
-    const [recipes, setRecipes] = useState([]);
+    
     useEffect(() => {
         fetch('/api/recipes')
             .then((response) => response.json())
-            .then((data) => setRecipes(data));
+            .then((data) => {
+                setRecipes(data);
+            });
     }, []);
 
     const navigate = useNavigate();

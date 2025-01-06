@@ -159,6 +159,8 @@ router.delete('/:id', async (req, res) => {
         return res.status(400).json({ error: 'Invalid id, it must be a positive integer.' });
     }
     try {
+        await db.query('DELETE FROM recipe_ingredients WHERE recipeId = ?', [id]);
+        
         await deleteRecord('recipes', id);
         res.json({ message: 'Recipe deleted successfully' });
     } catch (error) {

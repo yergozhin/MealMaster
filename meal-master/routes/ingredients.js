@@ -61,6 +61,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
+        await db.query('DELETE FROM recipe_ingredients WHERE ingredientId = ?', [id]);
         await deleteRecord('ingredients', id);
         res.json({ message: 'Ingredient deleted successfully' });
     } catch (error) {

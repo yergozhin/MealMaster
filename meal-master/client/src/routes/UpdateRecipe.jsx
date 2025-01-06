@@ -84,7 +84,6 @@ const UpdateRecipe = () => {
                 ingredientId: ingredient.ingredientsId[0].id,
                 userId: recipe[0].userId,
             };
-            console.log(recipeIngredientData);
     
             const recipeIngredientResponse = await fetch('/api/recipe_ingredients', {
                 method: 'POST',

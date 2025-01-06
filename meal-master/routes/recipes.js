@@ -38,7 +38,7 @@ const upload = multer({
 
 router.get('/', async (req, res) => {
     try {
-        const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt', 'imageUrl']);
+        const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt', 'imageUrl', 'userId']);
         res.json(recipes);
     } catch (error) {
         res.status(500).json({ error: error.message });

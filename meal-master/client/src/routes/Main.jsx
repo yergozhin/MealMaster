@@ -195,7 +195,9 @@ function Main() {
     const goToAddTranslation = () => {
         navigate("/addTranslation");
     };
-
+    const goToHome = () => {
+        navigate("/");
+    };
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
 
@@ -253,7 +255,7 @@ function Main() {
                     </div>
                     <div className="section">
                         <div className="subsection">
-                            <button onClick={navigate('/')}>{translations.Home}</button>
+                            <button onClick={goToHome}>{translations.Home}</button>
                         </div>
                         {user && user.length > 0 ? (<>
                             <div className="subsection">

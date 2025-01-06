@@ -237,13 +237,6 @@ function Main() {
     return (
         <div className="App">
             <header>
-                <div>
-                    {user && user.length > 0 ? (
-                        <h1>{translations.Welcome}, {translations.User} {user[0].id}!</h1>
-                    ) : (
-                        <h1>{translations.Pleaselogin}</h1>
-                    )}
-                </div>
                 <div className="container">
                     <div className="section" id="section1">
                         <div className="subsection">
@@ -331,19 +324,6 @@ function Main() {
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">{translations.Delicious} {recipe.name}!</p>
                         <button onClick={() => goToViewRecipe(recipe.id)} className="recipe-button">{translations.ViewRecipe}</button>
-                        {user && user.length > 0 ? (
-                            <><button className="addtofavorites-button">{translations.AddToFavorites}</button>
-                                <div className="rating">
-                                    <button className="star" data-value="1">☆</button>
-                                    <button className="star" data-value="2">☆</button>
-                                    <button className="star" data-value="3">☆</button>
-                                    <button className="star" data-value="4">☆</button>
-                                    <button className="star" data-value="5">☆</button>
-                                </div></>
-                        ) : (
-                            <></>
-                        )}
-
                     </div>))}
                 </div>
                 <div className="pagination">

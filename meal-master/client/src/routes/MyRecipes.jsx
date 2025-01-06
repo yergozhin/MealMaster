@@ -192,13 +192,6 @@ function MyRecipes() {
     return (
         <div className="App">
             <header>
-                <div>
-                    {user ? (
-                        <h1>{translations.Welcome}, {translations.User} {user[0].id}!</h1>
-                    ) : (
-                        <h1>{translations.Pleaselogin}</h1>
-                    )}
-                </div>
                 <div className="container">
                     <div className="section" id="section1">
                         <div className="subsection">

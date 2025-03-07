@@ -24,7 +24,13 @@ https://github.com/user-attachments/assets/febf3005-3167-48ac-a82d-81636765d428
 
 
 - **Login**
+  
+
+https://github.com/user-attachments/assets/bd809f93-eab7-4851-8dc9-8b973c1ac1de
+
+
 - **Add Recipe**
+  
 - **CRUD on your added recipe**
 - **View recipes of different users**
 - **Translations**

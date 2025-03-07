@@ -25,7 +25,7 @@ function Main() {
             const data = await response.json();
             return data.translation || word;
         } catch (error) {
-            console.error('Error fetching translation:', error);
+            //console.error('Error fetching translation:', error);
             return word;
         }
     };
@@ -61,28 +61,6 @@ function Main() {
         setLanguage(lang);
         localStorage.setItem('language', lang);
     };
-    useEffect(() => {
-        const translateRecipes = async () => {
-            const translatedRecipes = await Promise.all(
-                filteredRecipes.map(async (recipe) => {
-                    const translatedName = await fetchTranslation(recipe.name || '', language);
-                    const translatedDescription = await fetchTranslation(recipe.description || '', language);
-
-                    return {
-                        ...recipe,
-                        name: translatedName,
-                        description: translatedDescription,
-                    };
-                })
-            );
-            setFilteredRecipes(translatedRecipes);
-        };
-
-        if (filteredRecipes.length > 0) {
-            translateRecipes();
-        }
-    }, [filteredRecipes, language]);
-
 
     useEffect(() => {
         const savedLanguage = localStorage.getItem('language');
@@ -160,15 +138,49 @@ function Main() {
     }, []);
 
     useEffect(() => {
-        if (searchQuery) {
-            const filtered = recipes.filter(recipe =>
-                recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+        const translateAndFilterRecipes = async () => {
+            const translatedRecipes = await Promise.all(
+                recipes.map(async (recipe) => {
+                    const translatedName = await fetchTranslation(recipe.name || '', language);
+                    const translatedDescription = await fetchTranslation(recipe.description || '', language);
+                    return { ...recipe, name: translatedName, description: translatedDescription };
+                })
             );
+
+            const filtered = searchQuery
+                ? translatedRecipes.filter((recipe) =>
+                    recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                : translatedRecipes;
+
             setFilteredRecipes(filtered);
-        } else {
-            setFilteredRecipes(recipes);
-        }
-    }, [searchQuery, recipes]);
+        };
+
+        translateAndFilterRecipes();
+    }, [recipes, language, searchQuery]);
+
+    useEffect(() => {
+        const sortRecipes = () => {
+            if (!filteredRecipes.length) return;
+
+            const sorted = [...filteredRecipes];
+            switch (sortCriteria) {
+                case 'name':
+                    sorted.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'userId':
+                    sorted.sort((a, b) => a.userId - b.userId);
+                    break;
+                default:
+                    break;
+            }
+
+            setFilteredRecipes(sorted);
+        };
+
+        sortRecipes();
+    }, [sortCriteria, filteredRecipes]);
+
 
 
     useEffect(() => {
@@ -179,31 +191,6 @@ function Main() {
                 setFilteredRecipes(data);
             });
     }, []);
-
-    /*useEffect(() => {
-        const sortRecipes = () => {
-            let sortedRecipes = [...filteredRecipes];
-    
-            switch (sortCriteria) {
-                case 'name':
-                    sortedRecipes.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-                case 'userId':
-                    sortedRecipes.sort((a, b) => a.userId - b.userId);
-                    break;
-                default:
-                    break;
-            }
-    
-            setFilteredRecipes(sortedRecipes);
-        };
-    
-        if (filteredRecipes.length > 0) {
-            sortRecipes();
-        }
-    }, [sortCriteria, filteredRecipes]); */
-    
-
 
     const navigate = useNavigate();
     const goToProfile = () => {

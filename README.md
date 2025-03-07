@@ -15,4 +15,16 @@ A simple web application that allows users to manage and organize food recipes e
 - **Backend**: Express.js with Node.js  
 - **Database**: MySQL for storing recipe data  
 
+## Video Presentations
 
+- **Register**
+  
+
+https://github.com/user-attachments/assets/febf3005-3167-48ac-a82d-81636765d428
+
+
+- **Login**
+- **Add Recipe**
+- **CRUD on your added recipe**
+- **View recipes of different users**
+- **Translations**

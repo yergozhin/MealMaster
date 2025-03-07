@@ -5,22 +5,31 @@ import '../App.css';
 import { useNavigate } from "react-router-dom";
 
 function Main() {
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortCriteria, setSortCriteria] = useState('name');
+    const [recipes, setRecipes] = useState([]);
     const [user, setUser] = useState(null);
     const fetchTranslation = async (word, lang) => {
-        console.log(word, lang);
-        const response = await fetch(`/api/translations/translate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ word, lang }),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return data.translation;
-        }
+        try {
+            const response = await fetch(`/api/translations/translate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word, lang }),
+            });
 
+            if (!response.ok) {
+                throw new Error('Translation failed');
+            }
+
+            const data = await response.json();
+            return data.translation || word;
+        } catch (error) {
+            //console.error('Error fetching translation:', error);
+            return word;
+        }
     };
+
     const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({
         Welcome: '',
@@ -52,6 +61,7 @@ function Main() {
         setLanguage(lang);
         localStorage.setItem('language', lang);
     };
+
     useEffect(() => {
         const savedLanguage = localStorage.getItem('language');
         if (savedLanguage) {
@@ -127,12 +137,59 @@ function Main() {
         }
     }, []);
 
+    useEffect(() => {
+        const translateAndFilterRecipes = async () => {
+            const translatedRecipes = await Promise.all(
+                recipes.map(async (recipe) => {
+                    const translatedName = await fetchTranslation(recipe.name || '', language);
+                    const translatedDescription = await fetchTranslation(recipe.description || '', language);
+                    return { ...recipe, name: translatedName, description: translatedDescription };
+                })
+            );
 
-    const [recipes, setRecipes] = useState([]);
+            const filtered = searchQuery
+                ? translatedRecipes.filter((recipe) =>
+                    recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                : translatedRecipes;
+
+            setFilteredRecipes(filtered);
+        };
+
+        translateAndFilterRecipes();
+    }, [recipes, language, searchQuery]);
+
+    useEffect(() => {
+        const sortRecipes = () => {
+            if (!filteredRecipes.length) return;
+
+            const sorted = [...filteredRecipes];
+            switch (sortCriteria) {
+                case 'name':
+                    sorted.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'userId':
+                    sorted.sort((a, b) => a.userId - b.userId);
+                    break;
+                default:
+                    break;
+            }
+
+            setFilteredRecipes(sorted);
+        };
+
+        sortRecipes();
+    }, [sortCriteria, filteredRecipes]);
+
+
+
     useEffect(() => {
         fetch('/api/recipes')
             .then((response) => response.json())
-            .then((data) => setRecipes(data));
+            .then((data) => {
+                setRecipes(data);
+                setFilteredRecipes(data);
+            });
     }, []);
 
     const navigate = useNavigate();
@@ -144,6 +201,9 @@ function Main() {
     };
     const goToAddRecipe = () => {
         navigate("/addRecipe");
+    };
+    const goToMyRecipes = () => {
+        navigate("/myRecipes");
     };
     const goToRegister = () => {
         navigate("/register");
@@ -161,7 +221,9 @@ function Main() {
     const goToAddTranslation = () => {
         navigate("/addTranslation");
     };
-
+    const goToHome = () => {
+        navigate("/");
+    };
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
 
@@ -174,7 +236,7 @@ function Main() {
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentItems = Array.isArray(recipes) ? recipes.slice(startIndex, startIndex + itemsPerPage) : [];
+    const currentItems = Array.isArray(filteredRecipes) ? filteredRecipes.slice(startIndex, startIndex + itemsPerPage) : [];
 
     const getPageNumbers = () => {
         const pageNumbers = [];
@@ -201,13 +263,6 @@ function Main() {
     return (
         <div className="App">
             <header>
-                <div>
-                    {user && user.length > 0 ? (
-                        <h1>{translations.Welcome}, {translations.User} {user[0].id}!</h1>
-                    ) : (
-                        <h1>{translations.Pleaselogin}</h1>
-                    )}
-                </div>
                 <div className="container">
                     <div className="section" id="section1">
                         <div className="subsection">
@@ -219,11 +274,11 @@ function Main() {
                     </div>
                     <div className="section">
                         <div className="subsection">
-                            <button>{translations.Home}</button>
+                            <button onClick={goToHome}>{translations.Home}</button>
                         </div>
                         {user && user.length > 0 ? (<>
                             <div className="subsection">
-                                <button>{translations.MyRecipes}</button>
+                                <button onClick={goToMyRecipes}>{translations.MyRecipes}</button>
                             </div>
                             <div className="subsection">
                                 <button onClick={goToAddRecipe}>{translations.AddRecipe}</button>
@@ -231,14 +286,30 @@ function Main() {
                         </>
                         ) : (<></>)}
                         <div className="subsection">
-                            <div className="filter-dropdown">
-                                <button className="filter-dropdown-button">{translations.BrowseRecipes}</button>
-                                <div className="filter-dropdown-content">
-                                    <label><input type="checkbox" className="filter" name="breakfast" />Breakfast</label>
-                                    <label><input type="checkbox" className="filter" name="lunch" />Lunch</label>
-                                    <label><input type="checkbox" className="filter" name="dinner" />Dinner</label>
+                            <div className="sort-dropdown">
+                                <button className="sort-dropdown-button">Sort Recipes</button>
+                                <div className="sort-dropdown-content">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="name"
+                                            checked={sortCriteria === 'name'}
+                                            onChange={(e) => setSortCriteria(e.target.value)}
+                                        />
+                                        Sort by Name
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="userId"
+                                            checked={sortCriteria === 'userId'}
+                                            onChange={(e) => setSortCriteria(e.target.value)}
+                                        />
+                                        Sort by User ID
+                                    </label>
                                 </div>
                             </div>
+
                         </div>
                         <div>
                             <button onClick={() => changeLanguage('en')}>English</button>
@@ -252,11 +323,14 @@ function Main() {
                             <>
                                 <div className="subsection">
                                     <div className="search-recipes">
-                                        <input type="text" className="search-input" placeholder="Search for recipes..." />
+                                        <input
+                                            type="text"
+                                            placeholder="Search recipes..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+
                                     </div>
-                                </div>
-                                <div className="subsection">
-                                    <button>{translations.FavoriteRecipes}</button>
                                 </div>
                                 <div className="subsection">
                                     <div className="user-profile">
@@ -295,19 +369,6 @@ function Main() {
                         <h3>{recipe.name}</h3>
                         <p className="recipe-description">{translations.Delicious} {recipe.name}!</p>
                         <button onClick={() => goToViewRecipe(recipe.id)} className="recipe-button">{translations.ViewRecipe}</button>
-                        {user && user.length > 0 ? (
-                            <><button className="addtofavorites-button">{translations.AddToFavorites}</button>
-                                <div className="rating">
-                                    <button className="star" data-value="1">☆</button>
-                                    <button className="star" data-value="2">☆</button>
-                                    <button className="star" data-value="3">☆</button>
-                                    <button className="star" data-value="4">☆</button>
-                                    <button className="star" data-value="5">☆</button>
-                                </div></>
-                        ) : (
-                            <></>
-                        )}
-
                     </div>))}
                 </div>
                 <div className="pagination">

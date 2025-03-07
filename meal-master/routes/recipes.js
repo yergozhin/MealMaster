@@ -38,7 +38,7 @@ const upload = multer({
 
 router.get('/', async (req, res) => {
     try {
-        const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt', 'imageUrl']);
+        const recipes = await getAllRecords('recipes', ['id', 'name', 'createdAt', 'imageUrl', 'userId']);
         res.json(recipes);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -159,6 +159,8 @@ router.delete('/:id', async (req, res) => {
         return res.status(400).json({ error: 'Invalid id, it must be a positive integer.' });
     }
     try {
+        await db.query('DELETE FROM recipe_ingredients WHERE recipeId = ?', [id]);
+        
         await deleteRecord('recipes', id);
         res.json({ message: 'Recipe deleted successfully' });
     } catch (error) {
@@ -174,7 +176,7 @@ const getRecipeDetails = async (recipeId) => {
     const recipe = await executeQuery(recipeQuery, [recipeId]);
 
     const ingredientsQuery = `
-        SELECT i.name, ri.quantity, ri.unit
+        SELECT i.id, i.name, ri.quantity, ri.unit
         FROM recipe_ingredients ri
         JOIN ingredients i ON ri.ingredientId = i.id
         WHERE ri.recipeId = ?`;

@@ -46,27 +46,26 @@ router.post('/', async (req, res) => {
     if (languageCode !== 'en' && languageCode !== 'es') {
         return res.status(400).json({ error: 'For now we can use only english or spanish translation.' });
     }
+    
     try {
         const mainExists = await db.query(
             'SELECT * FROM translations WHERE text = ? AND translationKey = ? LIMIT 1',
             [text, translationKey]
         );
-        if (!mainExists.length) {
+        if (!mainExists[0].length) {
             const newTranslation = { translationKey, languageCode, text };
             await addRecord('translations', newTranslation);
         }
         const reverseExists = await db.query(
             'SELECT * FROM translations WHERE text = ? AND translationKey = ? LIMIT 1',
-            [text, translationKey]
+            [translationKey, text]
         );
-        if (!reverseExists.length) {
+        if (!reverseExists[0].length) {
             if (languageCode == 'en') {
-                const reverseLang = 'es';
-                const reverseTranslation = { text, reverseLang, translationKey };
+                const reverseTranslation = { text, languageCode: 'es', translationKey };
                 await addRecord('translations', reverseTranslation);
             } else {
-                const reverseLang = 'en';
-                const reverseTranslation = { text, reverseLang, translationKey };
+                const reverseTranslation = { text: translationKey, languageCode: 'en', translationKey: text };
                 await addRecord('translations', reverseTranslation);
             }
         }

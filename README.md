@@ -1,5 +1,4 @@
 
-https://github.com/user-attachments/assets/4c576ef5-1ce5-4639-90eb-26d2a027bada
 # Food Recipe App
 
 A simple web application that allows users to manage and organize food recipes efficiently. The app enables users to create, edit, view, and delete recipes. It also includes a search functionality to find specific recipes quickly.

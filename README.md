@@ -49,3 +49,8 @@ https://github.com/user-attachments/assets/0c79b9f8-bc2b-4c42-9bdc-fcf28dbe437f
 
 
 - **Translations**
+  
+
+
+https://github.com/user-attachments/assets/bebcbbac-8ae6-48a2-958f-405eb584fe61
+

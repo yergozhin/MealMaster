@@ -43,4 +43,9 @@ https://github.com/user-attachments/assets/4d68e96b-650d-4d17-a07b-19e594d2a0ba
 
 
 - **View recipes of different users**
+  
+
+https://github.com/user-attachments/assets/0c79b9f8-bc2b-4c42-9bdc-fcf28dbe437f
+
+
 - **Translations**

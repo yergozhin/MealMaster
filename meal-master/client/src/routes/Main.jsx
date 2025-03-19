@@ -159,7 +159,7 @@ function Main() {
         translateAndFilterRecipes();
     }, [recipes, language, searchQuery]);
 
-    useEffect(() => {
+   /* useEffect(() => {
         const sortRecipes = () => {
             if (!filteredRecipes.length) return;
 
@@ -179,7 +179,7 @@ function Main() {
         };
 
         sortRecipes();
-    }, [sortCriteria, filteredRecipes]);
+    }, [sortCriteria, filteredRecipes]);*/
 
 
 

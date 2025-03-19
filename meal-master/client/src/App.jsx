@@ -13,6 +13,7 @@ import DeleteRecipe from './routes/DeleteRecipe.jsx';
 import UpdateRecipe from './routes/UpdateRecipe.jsx';
 import AddTranslation from './routes/AddTranslation.jsx';
 import AdminRoute from './auth/AdminRoute';
+import MyRecipes from './routes/MyRecipes.jsx';
 
 const App = () => (
   <Router>
@@ -27,6 +28,7 @@ const App = () => (
       <Route path="/deleteRecipe/:id" element={<AdminRouteRecipe><DeleteRecipe /></AdminRouteRecipe>} />
       <Route path="/updateRecipe/:id" element={<AdminRouteRecipe><UpdateRecipe /></AdminRouteRecipe>} />
       <Route path="/addTranslation" element={<AdminRoute><AddTranslation /></AdminRoute>} />
+      <Route path="/myRecipes" element={<ProtectedRoute><MyRecipes /></ProtectedRoute>} />
     </Routes>
   </Router>
 );

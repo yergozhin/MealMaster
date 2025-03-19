@@ -50,21 +50,21 @@ const AddTranslation = () => {
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: "10px" }}>
                     <label htmlFor="translationKey" style={{ display: "block", marginBottom: "5px" }}>
-                        Translation Key
+                        Translation Of Text:
                     </label>
                     <input
                         type="text"
                         id="translationKey"
                         value={translationKey}
                         onChange={(e) => setTranslationKey(e.target.value)}
-                        placeholder="Enter translation key"
+                        placeholder="Enter text to translate"
                         style={{ width: "100%", padding: "8px" }}
                     />
                 </div>
 
                 <div style={{ marginBottom: "10px" }}>
                     <label htmlFor="languageCode" style={{ display: "block", marginBottom: "5px" }}>
-                        Language Code
+                        To Language
                     </label>
                     <input
                         type="text"
@@ -78,7 +78,7 @@ const AddTranslation = () => {
 
                 <div style={{ marginBottom: "10px" }}>
                     <label htmlFor="text" style={{ display: "block", marginBottom: "5px" }}>
-                        Translation Text
+                        Translated Text
                     </label>
                     <textarea
                         id="text"

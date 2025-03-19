@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import '../App.css';
 
 const AddRecipe = () => {
     const navigate = useNavigate();
@@ -129,12 +130,13 @@ const AddRecipe = () => {
     };
 
     return (
-        <div>
-            <h1>Add Recipe</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Recipe Name:</label>
+        <div className="add-recipe-container">
+            <h1 className="add-recipe-title">Add Recipe</h1>
+            <form className="add-recipe-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label className="form-label">Recipe Name:</label>
                     <input
+                        className="form-input"
                         type="text"
                         name="name"
                         value={recipe.name}
@@ -142,18 +144,20 @@ const AddRecipe = () => {
                         required
                     />
                 </div>
-                <div>
-                    <label>Description:</label>
+                <div className="form-group">
+                    <label className="form-label">Description:</label>
                     <textarea
+                        className="form-input"
                         name="description"
                         value={recipe.description}
                         onChange={handleRecipeChange}
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="image">Image:</label>
+                <div className="form-group">
+                    <label className="form-label" htmlFor="image">Image:</label>
                     <input
+                        className="form-input"
                         type="file"
                         id="image"
                         name="image"
@@ -161,11 +165,12 @@ const AddRecipe = () => {
                         onChange={handleFileChange}
                     />
                 </div>
-                <div>
-                    <h2>Ingredients</h2>
+                <div className="form-group">
+                    <h2 className="ingredients-title">Ingredients</h2>
                     {ingredients.map((ingredient, index) => (
-                        <div key={index}>
+                        <div className="ingredient-fields" key={index}>
                             <input
+                                className="form-input ingredient-input"
                                 type="text"
                                 placeholder="Name"
                                 value={ingredient.name}
@@ -175,6 +180,7 @@ const AddRecipe = () => {
                                 required
                             />
                             <input
+                                className="form-input ingredient-input"
                                 type="number"
                                 placeholder="Quantity"
                                 value={ingredient.quantity}
@@ -184,6 +190,7 @@ const AddRecipe = () => {
                                 required
                             />
                             <input
+                                className="form-input ingredient-input"
                                 type="text"
                                 placeholder="Unit (e.g., grams)"
                                 value={ingredient.unit}
@@ -193,6 +200,7 @@ const AddRecipe = () => {
                                 required
                             />
                             <input
+                                className="form-input ingredient-input"
                                 type="text"
                                 placeholder="Note"
                                 value={ingredient.notes}
@@ -204,12 +212,16 @@ const AddRecipe = () => {
                         </div>
                     ))}
                 </div>
-                <button type="button" onClick={addIngredientField}>
+                <button
+                    className="form-button"
+                    type="button"
+                    onClick={addIngredientField}
+                >
                     Add More Ingredients
                 </button>
-                <button type="submit">Submit</button>
+                <button className="form-button submit-button" type="submit">Submit</button>
             </form>
-            {message && <p>{message}</p>}
+            {message && <p className="form-message">{message}</p>}
         </div>
     );
 };

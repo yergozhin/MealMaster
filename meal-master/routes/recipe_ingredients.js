@@ -130,4 +130,33 @@ const getRecipeAndIngredientDetails = async (recipe_ingredientsId) => {
     return { recipe, ingredient, recipe_ingredients };
 };
 
+router.delete('/recipe/:recipeId/ingredient/:ingredientId', async (req, res) => {
+    const { recipeId, ingredientId } = req.params;
+
+    if (isNaN(recipeId) || parseInt(recipeId) <= 0 || !Number.isInteger(Number(recipeId))) {
+        return res.status(400).json({ error: 'Invalid recipeId, it must be a positive integer.' });
+    }
+
+    if (isNaN(ingredientId) || parseInt(ingredientId) <= 0 || !Number.isInteger(Number(ingredientId))) {
+        return res.status(400).json({ error: 'Invalid ingredientId, it must be a positive integer.' });
+    }
+
+    try {
+        const deleteQuery = `
+            DELETE FROM recipe_ingredients
+            WHERE recipeId = ? AND ingredientId = ?`;
+        
+        const result = await executeQuery(deleteQuery, [recipeId, ingredientId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'No matching recipe_ingredient found for the provided recipeId and ingredientId.' });
+        }
+
+        res.json({ message: 'Recipe_ingredient entry deleted successfully.' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 module.exports = router;

@@ -34,7 +34,12 @@ router.post('/', async (req, res) => {
     try {
         const newIngredient = { name, unit };
         await addRecord('ingredients', newIngredient);
-        res.status(201).json({ message: 'Ingredient added successfully' });
+        const ingredientsQuery = `
+        SELECT id
+        FROM ingredients
+        WHERE name = ?`;
+        const ingredients = await executeQuery(ingredientsQuery, [name]);
+        res.status(201).json({ message: 'Ingredient added successfully', ingredientsId: ingredients });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -61,6 +66,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
+        await db.query('DELETE FROM recipe_ingredients WHERE ingredientId = ?', [id]);
         await deleteRecord('ingredients', id);
         res.json({ message: 'Ingredient deleted successfully' });
     } catch (error) {

@@ -1,12 +1,29 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name || name.trim().length === 0) {
+      alert('Name is required');
+      return;
+    }
+
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      alert('Invalid email format');
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+
     const response = await fetch('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -18,6 +35,7 @@ const RegisterForm = () => {
     } else {
       alert('Registration failed: ' + data.error);
     }
+    navigate('/');
   };
 
   return (

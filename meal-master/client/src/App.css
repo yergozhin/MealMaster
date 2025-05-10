@@ -86,7 +86,8 @@ nav {
 
 .user-profile:hover .profile-dropdown-menu {
   display: block;
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .container {

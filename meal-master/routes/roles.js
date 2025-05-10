@@ -13,6 +13,9 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'ID must be a positive integer.' });
+    }
     try {
         const role = await getRecordById('roles', id);
         res.json(role);
@@ -24,9 +27,10 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const name = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    if (!name || typeof name !== 'string' || name.trim().length < 3) {
+        return res.status(400).json({ error: 'Name must be a string with at least 3 characters.' });
     }
+
 
     try {
         const newRole = name;
@@ -41,10 +45,13 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const name = req.body;
 
-    if (!name) {
-        return res.status(400).json({ error: 'Missing required fields' });
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'ID must be a positive integer.' });
     }
 
+    if (!name || typeof name !== 'string' || name.trim().length < 3) {
+        return res.status(400).json({ error: 'Name must be a string with at least 3 characters.' });
+    }
     try {
         const updatedRole = name;
         await updateRecord('roles', id, updatedRole);
@@ -56,7 +63,9 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
-
+    if (!id || isNaN(id) || parseInt(id) <= 0 || !Number.isInteger(Number(id))) {
+        return res.status(400).json({ error: 'ID must be a positive integer.' });
+    }
     try {
         await deleteRecord('roles', id);
         res.json({ message: 'Role deleted successfully' });

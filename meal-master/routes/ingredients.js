@@ -15,6 +15,9 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const ingredient = await getRecordById('ingredients', id);
+        if (!ingredient) {
+            return res.status(404).json({ error: 'Ingredient not found' });
+        }
         res.json(ingredient);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -29,7 +32,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const newIngredient = { name, unit};
+        const newIngredient = { name, unit };
         await addRecord('ingredients', newIngredient);
         res.status(201).json({ message: 'Ingredient added successfully' });
     } catch (error) {
@@ -46,7 +49,7 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const updatedIngredient = { name, unit};
+        const updatedIngredient = { name, unit };
         await updateRecord('ingredients', id, updatedIngredient);
         res.json({ message: 'Ingredient updated successfully' });
     } catch (error) {
